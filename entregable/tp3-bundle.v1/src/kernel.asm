@@ -6,6 +6,7 @@
 %include "print.mac"
 
 global start
+extern GDT_DESC
 
 
 ;; Saltear seccion de datos
@@ -46,6 +47,8 @@ start:
     
     ; Cargar la GDT
 
+    lgdt [GDT_DESC]
+    xchg bx, bx
     ; Setear el bit PE del registro CR0
     
     ; Saltar a modo protegido
