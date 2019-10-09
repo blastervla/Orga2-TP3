@@ -48,12 +48,33 @@ start:
     ; Cargar la GDT
 
     lgdt [GDT_DESC]
-    xchg bx, bx
     ; Setear el bit PE del registro CR0
     
     ; Saltar a modo protegido
+    mov eax, cr0
+    or eax, 1
+    mov cr0, eax
+
+    jmp (14<<3):modo_protegido
+modo_protegido:
+BITS 32
+
+    xchg bx, bx
 
     ; Establecer selectores de segmentos
+    mov eax, 16 << 3
+    mov ss, eax
+    xchg bx, bx
+
+    mov ds, eax
+    mov gs, eax
+    mov es, eax
+    mov fs, eax
+    xchg bx, bx
+
+    mov esp, 0x2B000
+
+    xchg bx, bx
 
     ; Establecer la base de la pila
     
