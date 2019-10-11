@@ -93,6 +93,25 @@ gdt_entry gdt[GDT_COUNT] = {
         (uint8_t)     0x01,           /* g            */
         (uint8_t)     0x00,           /* base[31:24]  */
     },
+
+    // ======= PANTALLA =======
+    // Es de 78x40
+    // Arranca en 0x000B8000
+    [18] = (gdt_entry) {
+        (uint16_t)    6239,           /* limit[0:15] a2FF = 163 MB / 4 KB */
+        (uint16_t)    0x8000,         /* base[0:15]   */
+        (uint8_t)     0x0B,           /* base[23:16]  */
+        (uint8_t)     0x02,           /* type         */
+        (uint8_t)     0x01,           /* s            */
+        (uint8_t)     0x00,           /* dpl          */
+        (uint8_t)     0x01,           /* p            */
+        (uint8_t)     0x00,           /* limit[16:19] */
+        (uint8_t)     0x00,           /* avl          */
+        (uint8_t)     0x00,           /* l            */
+        (uint8_t)     0x01,           /* db           */
+        (uint8_t)     0x00,           /* g            */
+        (uint8_t)     0x00,           /* base[31:24]  */
+    },
 };
 
 gdt_descriptor GDT_DESC = {

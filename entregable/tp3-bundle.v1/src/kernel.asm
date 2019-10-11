@@ -5,6 +5,9 @@
 
 %include "print.mac"
 
+%define SCREEN_W 78
+%define SCREEN_H 40
+
 global start
 extern GDT_DESC
 
@@ -59,29 +62,29 @@ start:
 modo_protegido:
 BITS 32
 
-    xchg bx, bx
-
     ; Establecer selectores de segmentos
+
     mov eax, 16 << 3
     mov ss, eax
-    xchg bx, bx
 
     mov ds, eax
     mov gs, eax
-    mov es, eax
     mov fs, eax
-    xchg bx, bx
-
-    mov esp, 0x2B000
-
-    xchg bx, bx
 
     ; Establecer la base de la pila
     
+    mov esp, 0x2B000
+
     ; Imprimir mensaje de bienvenida
+    print_text_pm start_pm_msg, start_pm_len, 0x07, SCREEN_W / 2 - start_rm_len / 2, SCREEN_H / 2
+
 
     ; Inicializar pantalla
-    
+    ; Screen Size : 78 x 40    
+    mov eax, 18 << 3
+    mov es, eax
+
+
     ; Inicializar el manejador de memoria
  
     ; Inicializar el directorio de paginas
