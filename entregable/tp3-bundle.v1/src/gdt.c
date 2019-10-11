@@ -98,7 +98,7 @@ gdt_entry gdt[GDT_COUNT] = {
     // Es de 78x40
     // Arranca en 0x000B8000
     [18] = (gdt_entry) {
-        (uint16_t)    6239,           /* limit[0:15] a2FF = 163 MB / 4 KB */
+        (uint16_t)    79990,           /* limit[0:15] a2FF = 163 MB / 4 KB */
         (uint16_t)    0x8000,         /* base[0:15]   */
         (uint8_t)     0x0B,           /* base[23:16]  */
         (uint8_t)     0x02,           /* type         */

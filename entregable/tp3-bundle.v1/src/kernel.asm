@@ -5,8 +5,10 @@
 
 %include "print.mac"
 
-%define SCREEN_W 78
-%define SCREEN_H 40
+%define SCREEN_W 80
+%define SCREEN_H 50
+%define C_LIGHT_GRAY 0x8
+%define C_ALL_LIGHT_GRAY 0x88
 
 global start
 extern GDT_DESC
@@ -23,6 +25,8 @@ start_rm_len equ    $ - start_rm_msg
 
 start_pm_msg db     'Iniciando kernel en Modo Protegido'
 start_pm_len equ    $ - start_pm_msg
+screen_cln_msg db     '   xX Usuario de Windows el que lee Xx    xX Usuario de Windows el que lee Xx   '
+screen_cln_len equ    $ - screen_cln_msg
 
 ;;
 ;; Seccion de código.
@@ -82,7 +86,16 @@ BITS 32
     ; Inicializar pantalla
     ; Screen Size : 78 x 40    
     mov eax, 18 << 3
-    mov es, eax
+    mov ds, eax ; Usamos el selector de video
+
+    xchg bx, bx
+
+    call limpiar_pantalla
+
+    mov eax, 16 << 3
+    mov ds, eax ; TODO: Checkear por redundancia / utilidad
+
+
 
 
     ; Inicializar el manejador de memoria
@@ -117,6 +130,21 @@ BITS 32
     mov ecx, 0xFFFF
     mov edx, 0xFFFF
     jmp $
+
+limpiar_pantalla:
+    push ebp
+    mov ebp, esp
+
+    mov ecx, SCREEN_H * 2
+    .loop:
+        print_text_pm screen_cln_msg, screen_cln_len, C_ALL_LIGHT_GRAY, ecx, 0
+        
+        dec ecx
+        cmp ecx, 0
+        jge .loop 
+
+    pop ebp
+    ret
 
 ;; -------------------------------------------------------------------------- ;;
 
