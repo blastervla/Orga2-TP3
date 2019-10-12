@@ -1,14 +1,23 @@
+asmsyntax=nasm
 ; ** por compatibilidad se omiten tildes **
 ; ==============================================================================
 ; TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 ; ==============================================================================
 
 %include "print.mac"
+%include "seg_print.mac"
 
 %define SCREEN_W 80
 %define SCREEN_H 50
 %define C_LIGHT_GRAY 0x8
 %define C_ALL_LIGHT_GRAY 0x88
+
+
+%define GDT_C0 14<<3
+%define GDT_C3 15<<3
+%define GDT_D0 16<<3
+%define GDT_D3 17<<3
+%define GDT_V0 18<<3
 
 global start
 extern GDT_DESC
@@ -62,13 +71,13 @@ start:
     or eax, 1
     mov cr0, eax
 
-    jmp (14<<3):modo_protegido
+    jmp (GDT_C0):modo_protegido
 modo_protegido:
 BITS 32
 
     ; Establecer selectores de segmentos
 
-    mov eax, 16 << 3
+    mov eax, GDT_D0
     mov ss, eax
 
     mov ds, eax
@@ -84,15 +93,15 @@ BITS 32
 
 
     ; Inicializar pantalla
-    ; Screen Size : 78 x 40    
-    mov eax, 18 << 3
+    ; Screen Size : 80 x 50 
+    mov eax, GDT_V0
     mov ds, eax ; Usamos el selector de video
 
     xchg bx, bx
 
     call limpiar_pantalla
 
-    mov eax, 16 << 3
+    mov eax, GDT_D0
     mov ds, eax ; TODO: Checkear por redundancia / utilidad
 
 
