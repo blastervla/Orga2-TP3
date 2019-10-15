@@ -4,11 +4,19 @@
 ; ==============================================================================
 
 %include "print.mac"
+%include "seg_print.mac"
 
 %define SCREEN_W 80
 %define SCREEN_H 50
 %define C_LIGHT_GRAY 0x8
 %define C_ALL_LIGHT_GRAY 0x88
+
+
+%define GDT_CODE_0 14<<3
+%define GDT_CODE_3 15<<3
+%define GDT_DATA_0 16<<3
+%define GDT_DATA_3 17<<3
+%define GDT_VIDEO 18<<3
 
 global start
 extern GDT_DESC
@@ -62,13 +70,13 @@ start:
     or eax, 1
     mov cr0, eax
 
-    jmp (14<<3):modo_protegido
+    jmp (GDT_CODE_0):modo_protegido
 modo_protegido:
 BITS 32
 
     ; Establecer selectores de segmentos
 
-    mov eax, 16 << 3
+    mov eax, GDT_DATA_0
     mov ss, eax
 
     mov ds, eax
@@ -84,16 +92,14 @@ BITS 32
 
 
     ; Inicializar pantalla
-    ; Screen Size : 78 x 40    
-    mov eax, 18 << 3
-    mov ds, eax ; Usamos el selector de video
-
-    xchg bx, bx
+    ; Screen Size : 80 x 50 
+    mov eax, GDT_VIDEO
+    mov fs, eax ; Usamos el selector de video
 
     call limpiar_pantalla
 
-    mov eax, 16 << 3
-    mov ds, eax ; TODO: Checkear por redundancia / utilidad
+    mov eax, GDT_DATA_0
+    mov fs, eax ; TODO: Checkear por redundancia / utilidad
 
 
 
@@ -135,9 +141,9 @@ limpiar_pantalla:
     push ebp
     mov ebp, esp
 
-    mov ecx, SCREEN_H * 2
+    mov ecx, SCREEN_H - 1 
     .loop:
-        print_text_pm screen_cln_msg, screen_cln_len, C_ALL_LIGHT_GRAY, ecx, 0
+        seg_print_text_pm screen_cln_msg, screen_cln_len, C_ALL_LIGHT_GRAY, ecx, 0
         
         dec ecx
         cmp ecx, 0
