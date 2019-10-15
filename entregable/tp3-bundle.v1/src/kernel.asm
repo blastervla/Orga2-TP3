@@ -13,11 +13,11 @@ asmsyntax=nasm
 %define C_ALL_LIGHT_GRAY 0x88
 
 
-%define GDT_C0 14<<3
-%define GDT_C3 15<<3
-%define GDT_D0 16<<3
-%define GDT_D3 17<<3
-%define GDT_V0 18<<3
+%define GDT_CODE_0 14<<3
+%define GDT_CODE_3 15<<3
+%define GDT_DATA_0 16<<3
+%define GDT_DATA_3 17<<3
+%define GDT_VIDEO 18<<3
 
 global start
 extern GDT_DESC
@@ -71,13 +71,13 @@ start:
     or eax, 1
     mov cr0, eax
 
-    jmp (GDT_C0):modo_protegido
+    jmp (GDT_CODE_0):modo_protegido
 modo_protegido:
 BITS 32
 
     ; Establecer selectores de segmentos
 
-    mov eax, GDT_D0
+    mov eax, GDT_DATA_0
     mov ss, eax
 
     mov ds, eax
@@ -94,14 +94,14 @@ BITS 32
 
     ; Inicializar pantalla
     ; Screen Size : 80 x 50 
-    mov eax, GDT_V0
+    mov eax, GDT_VIDEO
     mov ds, eax ; Usamos el selector de video
 
     xchg bx, bx
 
     call limpiar_pantalla
 
-    mov eax, GDT_D0
+    mov eax, GDT_DATA_0
     mov ds, eax ; TODO: Checkear por redundancia / utilidad
 
 
