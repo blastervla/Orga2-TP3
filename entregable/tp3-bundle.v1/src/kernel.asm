@@ -5,12 +5,12 @@
 
 %include "print.mac"
 %include "seg_print.mac"
+%include "colors.mac"
 
 %define SCREEN_W 80
 %define SCREEN_H 50
-%define C_LIGHT_GRAY 0x8
-%define C_ALL_LIGHT_GRAY 0x88
-
+%define BOARD_H 40
+%define BOARD_W 78
 
 %define GDT_CODE_0 14<<3
 %define GDT_CODE_3 15<<3
@@ -35,6 +35,12 @@ start_pm_msg db     'Iniciando kernel en Modo Protegido'
 start_pm_len equ    $ - start_pm_msg
 screen_cln_msg db     '   xX Usuario de Windows el que lee Xx    xX Usuario de Windows el que lee Xx   '
 screen_cln_len equ    $ - screen_cln_msg
+
+single_char db '@'
+single_char_len equ $ - single_char
+
+box_msg TIMES 38 db '@'
+box_len equ $ - box_msg
 
 ;;
 ;; Seccion de código.
@@ -97,6 +103,7 @@ BITS 32
     mov fs, eax ; Usamos el selector de video
 
     call limpiar_pantalla
+    call draw_screen
 
     mov eax, GDT_DATA_0
     mov fs, eax ; TODO: Checkear por redundancia / utilidad
@@ -143,11 +150,49 @@ limpiar_pantalla:
 
     mov ecx, SCREEN_H - 1 
     .loop:
-        seg_print_text_pm screen_cln_msg, screen_cln_len, C_ALL_LIGHT_GRAY, ecx, 0
+        seg_print_text_pm screen_cln_msg, screen_cln_len, C_BG_LIGHT_GREY + C_FG_LIGHT_GREY, ecx, 0
         
         dec ecx
         cmp ecx, 0
-        jge .loop 
+        jge .loop
+
+    pop ebp
+    ret
+
+draw_screen:
+    push ebp
+    mov ebp, esp
+
+    ; Barras
+    mov ecx, BOARD_H/ 2 + 3
+    .bar_loop:
+        seg_print_text_pm single_char, single_char_len, C_BG_RED + C_FG_BLACK, ecx, 0
+        seg_print_text_pm single_char, single_char_len, C_BG_BLUE + C_FG_CYAN, ecx, 79
+
+        dec ecx
+        cmp ecx, BOARD_H / 2 - 3
+        jge .bar_loop
+
+
+    seg_print_text_pm screen_cln_msg, screen_cln_len, C_BG_BLACK + C_FG_BLACK, SCREEN_H - 1, 0
+
+    ; Cuadrados
+    ; 8 * 38
+    mov ecx, SCREEN_H - 2
+    .box_loop:
+        seg_print_text_pm single_char,  single_char_len,    C_BG_BLACK + C_FG_BLACK,    ecx, 0  ; Left outline
+        seg_print_text_pm box_msg,      box_len,            C_BG_RED + C_FG_BLACK,      ecx, 1  ; Box
+        seg_print_text_pm single_char,  single_char_len,    C_BG_BLACK + C_FG_BLACK,    ecx, 39 ; Middle outline
+        seg_print_text_pm single_char,  single_char_len,    C_BG_BLACK + C_FG_BLACK,    ecx, 40 ; Middle outline
+        seg_print_text_pm box_msg,      box_len,            C_BG_BLUE + C_FG_CYAN,      ecx, 41 ; Box
+        seg_print_text_pm single_char,  single_char_len,    C_BG_BLACK + C_FG_BLACK,    ecx, 79 ; Right outline
+
+        dec ecx
+        cmp ecx, SCREEN_H - 9
+        jge .box_loop
+
+    seg_print_text_pm screen_cln_msg, screen_cln_len, C_BG_BLACK + C_FG_BLACK, SCREEN_H - 10, 0
+
 
     pop ebp
     ret
