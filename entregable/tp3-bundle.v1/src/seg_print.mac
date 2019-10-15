@@ -62,7 +62,7 @@
     ; Imprimir cadena
     %%ciclo_cadena:
         mov     al, [edi]       ; al = caracter
-        mov     [ebx], ax       ; Escribir en pantalla
+        mov     [fs:ebx], ax     ; Escribir en pantalla
         add     ebx, 2          ; Avanzar el puntero de la memoria de video
         inc     edi             ; Avanzar el puntero de la cadena
         loop    %%ciclo_cadena

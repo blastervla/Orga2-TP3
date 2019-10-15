@@ -94,14 +94,12 @@ BITS 32
     ; Inicializar pantalla
     ; Screen Size : 80 x 50 
     mov eax, GDT_VIDEO
-    mov ds, eax ; Usamos el selector de video
-
-    xchg bx, bx
+    mov fs, eax ; Usamos el selector de video
 
     call limpiar_pantalla
 
     mov eax, GDT_DATA_0
-    mov ds, eax ; TODO: Checkear por redundancia / utilidad
+    mov fs, eax ; TODO: Checkear por redundancia / utilidad
 
 
 
@@ -143,9 +141,9 @@ limpiar_pantalla:
     push ebp
     mov ebp, esp
 
-    mov ecx, SCREEN_H * 2
+    mov ecx, SCREEN_H - 1 
     .loop:
-        print_text_pm screen_cln_msg, screen_cln_len, C_ALL_LIGHT_GRAY, ecx, 0
+        seg_print_text_pm screen_cln_msg, screen_cln_len, C_ALL_LIGHT_GRAY, ecx, 0
         
         dec ecx
         cmp ecx, 0
