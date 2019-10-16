@@ -14,6 +14,7 @@ sched_task_selector:   dw 0xFFFFFFFF
 
 ;; PIC
 extern pic_finish1
+extern pic_finish2
 
 ;; Sched
 extern sched_nextTask
@@ -40,7 +41,7 @@ _isr%1:
     push C_BG_WHITE + C_FG_BLACK
     push 25
     push 40
-    push  1
+    push  2
     push %1
     call print_dec
 
@@ -83,15 +84,39 @@ _isr32:
 
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
-ISR 33;_isr33:
+_isr33:
+    in al, 0x60
+    ; 02 (1), 03 (2), 04 (3), 05 (4), 06 (5), 07 (6), 08 (7), 09 (8), 0a (9), 0b (0)
+    dec al ; Convertimos a decimal
 
-    ;iret
+    xchg bx, bx
+
+    int 47
+
+    xchg bx, bx
+
+    cmp eax, 10
+    jg .noPrint
+
+    push C_BG_WHITE + C_FG_BLACK
+    push 0
+    push 79
+    push 1
+    push eax
+    call print_dec
+
+    add esp, 20
+
+.noPrint:
+
+    call pic_finish1
+    iret
 
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
-ISR 47;_isr47:
-
-    ;iret
+_isr47:
+    mov eax, 0x42
+    iret
 
 ;; Funciones Auxiliares
 ;; -------------------------------------------------------------------------- ;;

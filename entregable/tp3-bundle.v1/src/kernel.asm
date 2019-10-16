@@ -135,10 +135,6 @@ BITS 32
     ; Cargar IDT
     lidt [IDT_DESC]
 
-    mov eax, 0
-    mov edx, 0
-    ;div edx         ; Rompemo tuti
- 
     ; Configurar controlador de interrupciones
     call pic_reset
     call pic_enable
