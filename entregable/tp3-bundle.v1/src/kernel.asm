@@ -20,6 +20,11 @@
 
 global start
 extern GDT_DESC
+extern IDT_DESC
+extern idt_init
+
+extern pic_reset
+extern pic_enable
 
 
 ;; Saltear seccion de datos
@@ -126,14 +131,22 @@ BITS 32
     ; Inicializar el scheduler
 
     ; Inicializar la IDT
-    
+    call idt_init
     ; Cargar IDT
+    lidt [IDT_DESC]
+
+    mov eax, 0
+    mov edx, 0
+    ;div edx         ; Rompemo tuti
  
     ; Configurar controlador de interrupciones
+    call pic_reset
+    call pic_enable
 
     ; Cargar tarea inicial
 
     ; Habilitar interrupciones
+    sti
 
     ; Saltar a la primera tarea: Idle
 
