@@ -7,6 +7,9 @@
 %include "seg_print.mac"
 %include "colors.mac"
 
+%define KERNEL_PAGE_DIR 0x0002B000
+%define KERNEL_PAGE_TABLE_0 0x0002C000
+
 %define SCREEN_W 80
 %define SCREEN_H 50
 %define BOARD_H 40
@@ -26,6 +29,7 @@ extern idt_init
 extern pic_reset
 extern pic_enable
 
+extern mmu_initKernelDir
 
 ;; Saltear seccion de datos
 jmp start
@@ -71,6 +75,7 @@ start:
 
     ; Habilitar A20
     
+    
     ; Cargar la GDT
 
     lgdt [GDT_DESC]
@@ -111,18 +116,24 @@ BITS 32
     call draw_screen
 
     mov eax, GDT_DATA_0
-    mov fs, eax ; TODO: Checkear por redundancia / utilidad
-
-
-
+    mov fs, eax
 
     ; Inicializar el manejador de memoria
  
     ; Inicializar el directorio de paginas
-    
+    call mmu_initKernelDir
+
     ; Cargar directorio de paginas
+    mov eax, KERNEL_PAGE_DIR    ; No hace falta shiftear porque está
+                                ; alineada a 4K y no usamos los 
+                                ; atributos PCD y PWT (bits 4 y 3)
+    mov cr3, eax
+
 
     ; Habilitar paginacion
+    mov eax, cr0
+    or eax, (1 << 31)
+    mov cr0, eax
     
     ; Inicializar tss
 

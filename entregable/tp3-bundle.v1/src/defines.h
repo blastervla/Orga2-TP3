@@ -23,6 +23,22 @@
 #define PAG_S                   0x00000000
 #define PAG_US                  0x00000004
 
+#define PAGE_PRESENT 		1
+#define PAGE_RW 	 		1
+#define PAGE_SUPERVISOR 	0
+#define PAGE_PWT			0
+#define PAGE_PCD			0
+#define PAGE_NOT_ACCESSED 	0
+#define PAGE_IGN 			0
+#define PAGE_PS_4K			0
+#define PAGE_GLOBAL 		0
+#define PAGE_AVL 			0
+
+#define PAGE_NOT_DIRTY		0
+#define PAGE_PAT 			0
+
+#define PAGE_DIR_SIZE		1024
+#define PAGE_TBL_SIZE		1024
 /* Misc */
 /* -------------------------------------------------------------------------- */
 
@@ -58,7 +74,7 @@
 
 /* Direcciones fisicas de directorios y tablas de paginas del KERNEL */
 /* -------------------------------------------------------------------------- */
-#define KERNEL_PAGE_DIR          0x00027000
-#define KERNEL_PAGE_TABLE_0      0x00028000
+#define KERNEL_PAGE_DIR          0x0002B000
+#define KERNEL_PAGE_TABLE_0      0x0002C000
 
 #endif  /* !__DEFINES_H__ */
