@@ -89,12 +89,6 @@ _isr33:
     ; 02 (1), 03 (2), 04 (3), 05 (4), 06 (5), 07 (6), 08 (7), 09 (8), 0a (9), 0b (0)
     dec al ; Convertimos a decimal
 
-    xchg bx, bx
-
-    int 47
-
-    xchg bx, bx
-
     cmp eax, 10
     jg .noPrint
 
