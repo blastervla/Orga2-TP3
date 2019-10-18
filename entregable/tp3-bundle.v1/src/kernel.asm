@@ -6,20 +6,8 @@
 %include "print.mac"
 %include "seg_print.mac"
 %include "colors.mac"
+%include "defines.mac"
 
-%define KERNEL_PAGE_DIR 0x0002B000
-%define KERNEL_PAGE_TABLE_0 0x0002C000
-
-%define SCREEN_W 80
-%define SCREEN_H 50
-%define BOARD_H 40
-%define BOARD_W 78
-
-%define GDT_CODE_0 14<<3
-%define GDT_CODE_3 15<<3
-%define GDT_DATA_0 16<<3
-%define GDT_DATA_3 17<<3
-%define GDT_VIDEO 18<<3
 
 global start
 extern GDT_DESC
@@ -51,6 +39,9 @@ single_char_len equ $ - single_char
 box_msg TIMES 38 db '@'
 box_len equ $ - box_msg
 
+group_msg db     ' 072/18 | 195/18 | 364/18 '
+group_msg_len equ    $ - group_msg
+
 ;;
 ;; Seccion de código.
 ;; -------------------------------------------------------------------------- ;;
@@ -74,7 +65,7 @@ start:
     
 
     ; Habilitar A20
-    
+    call A20_enable
     
     ; Cargar la GDT
 
@@ -134,6 +125,9 @@ BITS 32
     mov eax, cr0
     or eax, (1 << 31)
     mov cr0, eax
+
+    ; Imprimir libretas de integrantes
+    call print_group
     
     ; Inicializar tss
 
@@ -217,6 +211,16 @@ draw_screen:
     pop ebp
     ret
 
+print_group:
+    push ebp
+    mov ebp, esp
+
+    print_text_pm group_msg, group_msg_len, C_BG_DARK_GREY + C_FG_DARK_GREY, BOARD_H / 2 - 1, SCREEN_W / 2 - group_msg_len / 2
+    print_text_pm group_msg, group_msg_len, C_BG_DARK_GREY + C_FG_WHITE, BOARD_H / 2, SCREEN_W / 2 - group_msg_len / 2
+    print_text_pm group_msg, group_msg_len, C_BG_DARK_GREY + C_FG_DARK_GREY, BOARD_H / 2 + 1, SCREEN_W / 2 - group_msg_len / 2
+
+    pop ebp
+    ret
 ;; -------------------------------------------------------------------------- ;;
 
 %include "a20.asm"

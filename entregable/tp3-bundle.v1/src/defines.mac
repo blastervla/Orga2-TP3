@@ -1,0 +1,18 @@
+%ifndef __DEFINES_MAC__
+%define __DEFINES_MAC__
+
+%define KERNEL_PAGE_DIR 0x0002B000
+%define KERNEL_PAGE_TABLE_0 0x0002C000
+
+%define SCREEN_W 80
+%define SCREEN_H 50
+%define BOARD_H 40
+%define BOARD_W 78
+
+%define GDT_CODE_0 14<<3
+%define GDT_CODE_3 15<<3
+%define GDT_DATA_0 16<<3
+%define GDT_DATA_3 17<<3
+%define GDT_VIDEO 18<<3
+
+%endif
