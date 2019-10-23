@@ -17,7 +17,9 @@ extern idt_init
 extern pic_reset
 extern pic_enable
 
+extern mmu_init
 extern mmu_initKernelDir
+extern mmu_initTaskDir
 
 ;; Saltear seccion de datos
 jmp start
@@ -110,7 +112,8 @@ BITS 32
     mov fs, eax
 
     ; Inicializar el manejador de memoria
- 
+    call mmu_init
+
     ; Inicializar el directorio de paginas
     call mmu_initKernelDir
 
@@ -125,6 +128,12 @@ BITS 32
     mov eax, cr0
     or eax, (1 << 31)
     mov cr0, eax
+
+    push 0
+    call mmu_initTaskDir
+    mov cr3, eax
+
+    xchg bx, bx
 
     ; Imprimir libretas de integrantes
     call print_group

@@ -24,8 +24,10 @@
 #define PAG_US                  0x00000004
 
 #define PAGE_PRESENT 		1
+#define PAGE_NOT_PRESENT 	0
 #define PAGE_RW 	 		1
 #define PAGE_SUPERVISOR 	0
+#define PAGE_TASK 			1
 #define PAGE_PWT			0
 #define PAGE_PCD			0
 #define PAGE_NOT_ACCESSED 	0
@@ -39,8 +41,10 @@
 
 #define PAGE_DIR_SIZE		1024
 #define PAGE_TBL_SIZE		1024
+#define PAGE_SIZE 			4 * 1024 // 4K
 /* Misc */
 /* -------------------------------------------------------------------------- */
+#define TASK_CODE_SIZE			2 * PAGE_SIZE
 
 /* Indices en la gdt */
 /* -------------------------------------------------------------------------- */
@@ -64,17 +68,26 @@
 
 /* Direcciones virtuales de código, pila y datos */
 /* -------------------------------------------------------------------------- */
-#define TASK_CODE             0x08000000 /* direccion virtual del codigo */
+#define TASK_CODE_ADDR			0x08000000 /* direccion virtual del codigo */
+#define TEMP_VIRTUAL_ADDR 		0x08004000
 
 /* Direcciones fisicas de codigos */
 /* -------------------------------------------------------------------------- */
 /* En estas direcciones estan los códigos de todas las tareas. De aqui se
  * copiaran al destino indicado por TASK_<i>_CODE_ADDR.
  */
+#define BASE_PHYS_CODE_ADDR		0x10000
 
 /* Direcciones fisicas de directorios y tablas de paginas del KERNEL */
 /* -------------------------------------------------------------------------- */
 #define KERNEL_PAGE_DIR          0x0002B000
 #define KERNEL_PAGE_TABLE_0      0x0002C000
+
+/* MMU */
+#define KERNEL_FREE_PAGE_START   0x00100000
+#define PEASANT_FREE_PAGE_START  0x00400000
+
+#define PDE_INDEX(virtual) (virtual >> 22)
+#define PTE_INDEX(virtual) (virtual >> 12)
 
 #endif  /* !__DEFINES_H__ */
