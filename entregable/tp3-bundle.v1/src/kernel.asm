@@ -129,11 +129,11 @@ BITS 32
     or eax, (1 << 31)
     mov cr0, eax
 
-    push 0
-    call mmu_initTaskDir
-    mov cr3, eax
-
-    xchg bx, bx
+    ; Item 5. d --------------
+    ; push 0
+    ; call mmu_initTaskDir
+    ; mov cr3, eax
+    ; ------------------------
 
     ; Imprimir libretas de integrantes
     call print_group

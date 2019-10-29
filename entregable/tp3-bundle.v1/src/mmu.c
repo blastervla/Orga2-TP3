@@ -176,12 +176,11 @@ uint32_t mmu_initTaskDir(PLAYER player) {
 	mmu_mapPage(TEMP_VIRTUAL_ADDR + PAGE_SIZE, cr3, physCodeDir1, PRIVILEDGE_LEVEL_TASK);
 
 	// --------------
-
 	// Vamos a copiar de a dword.
 	// Para ello, nos movemos de a 4 Bytes.
-	for (uint32_t i = 0; i < (TASK_CODE_SIZE / 4); i++) {
-		uint32_t *dwordSrcActual = (uint32_t *) dirCodigo + (i * 4);
-		uint32_t *dwordDstActual = (uint32_t *) TEMP_VIRTUAL_ADDR + (i * 4);
+	for (uint32_t i = 0; i < TASK_CODE_SIZE; i++) {
+		char *dwordSrcActual = (char *) dirCodigo + i;
+		char *dwordDstActual = (char *) TEMP_VIRTUAL_ADDR + i;
 
 		*dwordDstActual = *dwordSrcActual;
 	}
