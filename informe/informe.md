@@ -1,9 +1,34 @@
-## Ejercicio 5
-Este ejercicio trata de la MMU
+## Ejercicio 4
+Este ejercicio trata de la MMU.
 
 #### defines.h
 - Agregamos defines de utilidad para sumar descriptividad a los descriptores 
   (valga la redundancia, y para que Ezequiel no nos pegue)
+
+#### kernel.asm
+- Llamamos a `mmu_initKernelDir`
+- Habilitamos paginación (poniendo el bit 31) de CR0 en 1.
+- Agregamos una subrutina `print_group` que se encarga de imprimir en pantalla
+  las libretas universitarias de los integrantes del equipo.
+
+#### mmu.h
+- Agregamos las definiciones de los structs para las PDE's y PTE's
+
+#### mmu.c
+- Completamos `mmu_initKernelDir`, que se encarga de:
+    - Inicializar el Page Directory del Kernel llenándolo de ceros.
+    - Escribir la primera entrada del Directory, configurándola para acceso de
+      supervisor.
+    - Configuramos todas las entradas de la primera (y al menos por ahora única)
+      tabla del Kernel, de manera tal que tengamos identity mapping para las
+      direcciones 0x00000000 a 0x003FFFFF.
+
+## Ejercicio 5
+Este ejercicio trata de la MMU también.
+
+#### defines.h
+- Continuamos agregando defines de utilidad para sumar descriptividad a los 
+  descriptores
 
 #### kernel.asm
 - Inicializamos la MMU llamando a `mmu_init`.
