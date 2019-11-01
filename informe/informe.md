@@ -1,3 +1,40 @@
+## Ejercicios 2 y 3
+
+#### idt.c
+- Agregamos un par de defines para los atributos de las entradas de la IDT de 
+  Kernel y de Tarea (un define para cada una).
+- Creamos una macro `IDT_ENTRY` para ayudarnos a armar la IDT. Esta macro toma
+  dos parámetros, `numero` y `attrVal`, y configura la entrada de número 
+  `numero` de manera adecuada, utilizando los atributos `attrVal` para la 
+  entrada.
+- En `idt_init` configuramos las entradas de las excepciones implementadas por 
+  Intel y de las interrupciones de Clock, Teclado y Syscall (32, 33 y 47, 
+  respectivamente). Configuramos todas como de nivel Kernel, salvo la Syscall (
+  pues su propósito es poder ser utilizada por la tarea).
+
+#### isr.asm
+- Implementamos la subrutina `_isr%1` para que imprima el número de excepción 
+  que la llamó por pantalla.
+- Utilizamos la macro `ISR 1` para implementar las rutinas de atención de todas
+  las excepciones implementadas por Intel.
+- Escribimos la rutina de atención del Clock para que printee la animación de
+  reloj provista por la cátedra en la esquina inferior derecha de la pantalla.
+- Implementamos la rutina de atención del Teclado para que, en caso de que el
+  "make code" de la tecla presionada corresponda a algún dígito decimal, imprima
+  en pantalla el dígito presiondo en la esquina superior derecha.
+- Escribimos la rutina de atención de la Syscall para que reemplaze el valor de
+  eax por el número 0x42.
+
+#### isr.h
+- Declaramos en isr.h todas las rutinas de atención de interrupción / ejecución.
+
+#### kernel.asm
+- Llamamos a `idt_init` para inicializar la IDT y luego cargamos el IDTR con la
+  instrucción `lidt`.
+- Resetteamos el PIC y lo habilitamos.
+- Habilitamos interrupciones.
+- Probamos que las excepciones se impriman en pantalla dividiendo por cero.
+
 ## Ejercicio 4
 Este ejercicio trata de la MMU.
 
