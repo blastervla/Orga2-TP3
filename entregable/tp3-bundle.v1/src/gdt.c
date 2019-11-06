@@ -112,6 +112,232 @@ gdt_entry gdt[GDT_COUNT] = {
         (uint8_t)     0x00,           /* g            */
         (uint8_t)     0x00,           /* base[31:24]  */
     },
+
+    // ======= TSS Tarea Inicial =========
+    [GDT_IDX_TSS_INIT] = (gdt_entry) {
+        (uint16_t)    TSS_SIZE - 1,   /* limit[0:15]  */
+        (uint16_t)    &tss_initial,  /* base[0:15]   */
+        (uint8_t)     0x00,           /* base[23:16]  */
+        (uint8_t)     0x09,           /* type         */
+        (uint8_t)     0x00,           /* s            */
+        (uint8_t)     0x00,           /* dpl          */
+        (uint8_t)     0x01,           /* p            */
+        (uint8_t)     0x00,           /* limit[16:19] */
+        (uint8_t)     0x00,           /* avl          */
+        (uint8_t)     0x00,           /* l            */
+        (uint8_t)     0x01,           /* db           */
+        (uint8_t)     0x00,           /* g            */
+        (uint8_t)     0x00,           /* base[31:24]  */
+    },
+
+    // ======= TSS Tarea Idle =========
+    [GDT_IDX_TSS_IDLE] = (gdt_entry) {
+        (uint16_t)    TSS_SIZE - 1,   /* limit[0:15]  */
+        (uint16_t)    TSS_BASE_IDLE,  /* base[0:15]   */
+        (uint8_t)     0x00,           /* base[23:16]  */
+        (uint8_t)     0x09,           /* type         */
+        (uint8_t)     0x00,           /* s            */
+        (uint8_t)     0x00,           /* dpl          */
+        (uint8_t)     0x01,           /* p            */
+        (uint8_t)     0x00,           /* limit[16:19] */
+        (uint8_t)     0x00,           /* avl          */
+        (uint8_t)     0x00,           /* l            */
+        (uint8_t)     0x01,           /* db           */
+        (uint8_t)     0x00,           /* g            */
+        (uint8_t)     0x00,           /* base[31:24]  */
+    },
+
+    [GDT_IDX_TSS_PA_T1] = (gdt_entry) {
+        (uint16_t)    TSS_SIZE - 1,   /* limit[0:15]  */
+        (uint16_t)    TSS_BASE_PA_T1  /* base[0:15]   */
+        (uint8_t)     0x00,           /* base[23:16]  */
+        (uint8_t)     0x09,           /* type         */
+        (uint8_t)     0x00,           /* s            */
+        (uint8_t)     0x00,           /* dpl          */
+        (uint8_t)     0x01,           /* p            */
+        (uint8_t)     0x00,           /* limit[16:19] */
+        (uint8_t)     0x00,           /* avl          */
+        (uint8_t)     0x00,           /* l            */
+        (uint8_t)     0x01,           /* db           */
+        (uint8_t)     0x00,           /* g            */
+        (uint8_t)     0x00,           /* base[31:24]  */
+    },
+
+    [GDT_IDX_TSS_PA_T1_H] = (gdt_entry) {
+        (uint16_t)    TSS_SIZE - 1,           /* limit[0:15]  */
+        (uint16_t)    TSS_BASE_PA_T1_H,         /* base[0:15]   */
+        (uint8_t)     0x00,           /* base[23:16]  */
+        (uint8_t)     0x09,           /* type         */
+        (uint8_t)     0x00,           /* s            */
+        (uint8_t)     0x00,           /* dpl          */
+        (uint8_t)     0x01,           /* p            */
+        (uint8_t)     0x00,           /* limit[16:19] */
+        (uint8_t)     0x00,           /* avl          */
+        (uint8_t)     0x00,           /* l            */
+        (uint8_t)     0x01,           /* db           */
+        (uint8_t)     0x00,           /* g            */
+        (uint8_t)     0x00,           /* base[31:24]  */
+    },
+
+    [GDT_IDX_TSS_PA_T2] = (gdt_entry) {
+        (uint16_t)    TSS_SIZE - 1,   /* limit[0:15]  */
+        (uint16_t)    TSS_BASE_PA_T2  /* base[0:15]   */
+        (uint8_t)     0x00,           /* base[23:16]  */
+        (uint8_t)     0x09,           /* type         */
+        (uint8_t)     0x00,           /* s            */
+        (uint8_t)     0x00,           /* dpl          */
+        (uint8_t)     0x01,           /* p            */
+        (uint8_t)     0x00,           /* limit[16:19] */
+        (uint8_t)     0x00,           /* avl          */
+        (uint8_t)     0x00,           /* l            */
+        (uint8_t)     0x01,           /* db           */
+        (uint8_t)     0x00,           /* g            */
+        (uint8_t)     0x00,           /* base[31:24]  */
+    },
+
+    [GDT_IDX_TSS_PA_T2_H] = (gdt_entry) {
+        (uint16_t)    TSS_SIZE - 1,   /* limit[0:15]  */
+        (uint16_t)    TSS_BASE_PA_T2_H,         /* base[0:15]   */
+        (uint8_t)     0x00,           /* base[23:16]  */
+        (uint8_t)     0x09,           /* type         */
+        (uint8_t)     0x00,           /* s            */
+        (uint8_t)     0x00,           /* dpl          */
+        (uint8_t)     0x01,           /* p            */
+        (uint8_t)     0x00,           /* limit[16:19] */
+        (uint8_t)     0x00,           /* avl          */
+        (uint8_t)     0x00,           /* l            */
+        (uint8_t)     0x01,           /* db           */
+        (uint8_t)     0x00,           /* g            */
+        (uint8_t)     0x00,           /* base[31:24]  */
+    },
+
+    [GDT_IDX_TSS_PA_T3] = (gdt_entry) {
+        (uint16_t)    TSS_SIZE - 1,   /* limit[0:15]  */
+        (uint16_t)    TSS_BASE_PA_T3  /* base[0:15]   */
+        (uint8_t)     0x00,           /* base[23:16]  */
+        (uint8_t)     0x09,           /* type         */
+        (uint8_t)     0x00,           /* s            */
+        (uint8_t)     0x00,           /* dpl          */
+        (uint8_t)     0x01,           /* p            */
+        (uint8_t)     0x00,           /* limit[16:19] */
+        (uint8_t)     0x00,           /* avl          */
+        (uint8_t)     0x00,           /* l            */
+        (uint8_t)     0x01,           /* db           */
+        (uint8_t)     0x00,           /* g            */
+        (uint8_t)     0x00,           /* base[31:24]  */
+    },
+
+    [GDT_IDX_TSS_PA_T3_H] = (gdt_entry) {
+        (uint16_t)    TSS_SIZE - 1,           /* limit[0:15]  */
+        (uint16_t)    TSS_BASE_PA_T3_H,         /* base[0:15]   */
+        (uint8_t)     0x00,           /* base[23:16]  */
+        (uint8_t)     0x09,           /* type         */
+        (uint8_t)     0x00,           /* s            */
+        (uint8_t)     0x00,           /* dpl          */
+        (uint8_t)     0x01,           /* p            */
+        (uint8_t)     0x00,           /* limit[16:19] */
+        (uint8_t)     0x00,           /* avl          */
+        (uint8_t)     0x00,           /* l            */
+        (uint8_t)     0x01,           /* db           */
+        (uint8_t)     0x00,           /* g            */
+        (uint8_t)     0x00,           /* base[31:24]  */
+    },
+
+    [GDT_IDX_TSS_PB_T1] = (gdt_entry) {
+        (uint16_t)    TSS_SIZE - 1,   /* limit[0:15]  */
+        (uint16_t)    TSS_BASE_PB_T1  /* base[0:15]   */
+        (uint8_t)     0x00,           /* base[23:16]  */
+        (uint8_t)     0x09,           /* type         */
+        (uint8_t)     0x00,           /* s            */
+        (uint8_t)     0x00,           /* dpl          */
+        (uint8_t)     0x01,           /* p            */
+        (uint8_t)     0x00,           /* limit[16:19] */
+        (uint8_t)     0x00,           /* avl          */
+        (uint8_t)     0x00,           /* l            */
+        (uint8_t)     0x01,           /* db           */
+        (uint8_t)     0x00,           /* g            */
+        (uint8_t)     0x00,           /* base[31:24]  */
+    },
+
+    [GDT_IDX_TSS_PB_T1_H] = (gdt_entry) {
+        (uint16_t)    TSS_SIZE - 1,           /* limit[0:15]  */
+        (uint16_t)    TSS_BASE_PB_T1_H,         /* base[0:15]   */
+        (uint8_t)     0x00,           /* base[23:16]  */
+        (uint8_t)     0x09,           /* type         */
+        (uint8_t)     0x00,           /* s            */
+        (uint8_t)     0x00,           /* dpl          */
+        (uint8_t)     0x01,           /* p            */
+        (uint8_t)     0x00,           /* limit[16:19] */
+        (uint8_t)     0x00,           /* avl          */
+        (uint8_t)     0x00,           /* l            */
+        (uint8_t)     0x01,           /* db           */
+        (uint8_t)     0x00,           /* g            */
+        (uint8_t)     0x00,           /* base[31:24]  */
+    },
+
+    [GDT_IDX_TSS_PB_T2] = (gdt_entry) {
+        (uint16_t)    TSS_SIZE - 1,   /* limit[0:15]  */
+        (uint16_t)    TSS_BASE_PB_T2  /* base[0:15]   */
+        (uint8_t)     0x00,           /* base[23:16]  */
+        (uint8_t)     0x09,           /* type         */
+        (uint8_t)     0x00,           /* s            */
+        (uint8_t)     0x00,           /* dpl          */
+        (uint8_t)     0x01,           /* p            */
+        (uint8_t)     0x00,           /* limit[16:19] */
+        (uint8_t)     0x00,           /* avl          */
+        (uint8_t)     0x00,           /* l            */
+        (uint8_t)     0x01,           /* db           */
+        (uint8_t)     0x00,           /* g            */
+        (uint8_t)     0x00,           /* base[31:24]  */
+    },
+
+    [GDT_IDX_TSS_PB_T2_H] = (gdt_entry) {
+        (uint16_t)    TSS_SIZE - 1,   /* limit[0:15]  */
+        (uint16_t)    TSS_BASE_PB_T2_H,         /* base[0:15]   */
+        (uint8_t)     0x00,           /* base[23:16]  */
+        (uint8_t)     0x09,           /* type         */
+        (uint8_t)     0x00,           /* s            */
+        (uint8_t)     0x00,           /* dpl          */
+        (uint8_t)     0x01,           /* p            */
+        (uint8_t)     0x00,           /* limit[16:19] */
+        (uint8_t)     0x00,           /* avl          */
+        (uint8_t)     0x00,           /* l            */
+        (uint8_t)     0x01,           /* db           */
+        (uint8_t)     0x00,           /* g            */
+        (uint8_t)     0x00,           /* base[31:24]  */
+    },
+
+    [GDT_IDX_TSS_PB_T3] = (gdt_entry) {
+        (uint16_t)    TSS_SIZE - 1,   /* limit[0:15]  */
+        (uint16_t)    TSS_BASE_PB_T3  /* base[0:15]   */
+        (uint8_t)     0x00,           /* base[23:16]  */
+        (uint8_t)     0x09,           /* type         */
+        (uint8_t)     0x00,           /* s            */
+        (uint8_t)     0x00,           /* dpl          */
+        (uint8_t)     0x01,           /* p            */
+        (uint8_t)     0x00,           /* limit[16:19] */
+        (uint8_t)     0x00,           /* avl          */
+        (uint8_t)     0x00,           /* l            */
+        (uint8_t)     0x01,           /* db           */
+        (uint8_t)     0x00,           /* g            */
+        (uint8_t)     0x00,           /* base[31:24]  */
+    },
+
+    [GDT_IDX_TSS_PB_T3_H] = (gdt_entry) {
+        (uint16_t)    TSS_SIZE - 1,           /* limit[0:15]  */
+        (uint16_t)    TSS_BASE_PB_T3_H,         /* base[0:15]   */
+        (uint8_t)     0x00,           /* base[23:16]  */
+        (uint8_t)     0x09,           /* type         */
+        (uint8_t)     0x00,           /* s            */
+        (uint8_t)     0x00,           /* dpl          */
+        (uint8_t)     0x01,           /* p            */
+        (uint8_t)     0x00,           /* limit[16:19] */
+        (uint8_t)     0x00,           /* avl          */
+        (uint8_t)     0x00,           /* l            */
+        (uint8_t)     0x01,           /* db           */
+        (uint8_t)     0x00,           /* g            */
+        (uint8_t)     0x00,           /* base[31:24]  */
+    },
 };
 
 gdt_descriptor GDT_DESC = {
