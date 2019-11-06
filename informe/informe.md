@@ -124,3 +124,19 @@ Implementamos las funciones:
     - Copiamos el código en las dos páginas pedidas.
     - Limpiamos los mappings temporales y devolvemos la dirección del nuevo 
       directorio de páginas.
+
+## Ejercicio 6
+
+#### defines.h
+- Declaramos nuevas constantes para el uso en la GDT.
+
+#### tss.c
+Decidimos definir todas las tss's
+
+#### gdt.c
+- Escribimos las gdt entries de todas las TSS que necesitaremos. Estas son 6 
+  para las tareas y otras 6 para sus respectivos handlers, una más para la tarea
+  inicial y una última para la tarea _idle_. Decidimos definir estas TSS's desde
+  la posición 0xE600 (pues 0xE600 + 14 * 512 = 0x10000, la última posición del
+  kernel).
+- 
