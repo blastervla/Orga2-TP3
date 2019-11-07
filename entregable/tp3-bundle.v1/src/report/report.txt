@@ -1,0 +1,11 @@
+## Steps to reproduce:
+1. Compile and disassemble with line 61 of main.c with a value of `0`
+2. Compile and disassemble with line 61 of main.c with a value of `1`
+
+## Compilation command:
+
+gcc -fno-pie -no-pie -m32 -g -ggdb -Wall -Werror -O0 -fno-stack-protector -ffreestanding -o main.o main.c
+
+## Disassemble:
+
+objdump -d -M "intel-mnemonic" main.o > disassembled.asm
