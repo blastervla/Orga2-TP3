@@ -69,18 +69,34 @@
 #define GDT_VIDEO 	18
 
 #define GDT_CODE_3 	15
-#define GDT_COUNT 30
+#define GDT_COUNT 33
 
 #define GDT_IDX_NULL_DESC           0
-#define GDT_IDX_TASK_INIT			19
-#define GDT_IDX_TASK_IDLE			20
+#define GDT_IDX_TSS_INIT			19
+#define GDT_IDX_TSS_IDLE			20
+
+#define GDT_IDX_TSS_PA_T1			21
+#define GDT_IDX_TSS_PA_T1_H			22
+#define GDT_IDX_TSS_PA_T2			23
+#define GDT_IDX_TSS_PA_T2_H			24
+#define GDT_IDX_TSS_PA_T3			25
+#define GDT_IDX_TSS_PA_T3_H			26
+
+#define GDT_IDX_TSS_PB_T1			27
+#define GDT_IDX_TSS_PB_T1_H			28
+#define GDT_IDX_TSS_PB_T2			29
+#define GDT_IDX_TSS_PB_T2_H			30
+#define GDT_IDX_TSS_PB_T3			31
+#define GDT_IDX_TSS_PB_T3_H			32
 
 #define GDT_OFF_NULL_DESC           (GDT_IDX_NULL_DESC << 3)
 
 
 
-
+/* TSS */
+/* -------------------------------------------------------------------------- */
 #define TSS_SIZE			512
+#define TSS_EFLAGS_INT		0x202
 
 /* Selectores de segmentos */
 /* -------------------------------------------------------------------------- */
@@ -107,6 +123,7 @@
 /* -------------------------------------------------------------------------- */
 #define KERNEL_PAGE_DIR          0x0002B000
 #define KERNEL_PAGE_TABLE_0      0x0002C000
+#define KERNEL_STACK_END         KERNEL_PAGE_DIR - 1
 
 /* MMU */
 #define KERNEL_FREE_PAGE_START   0x00100000

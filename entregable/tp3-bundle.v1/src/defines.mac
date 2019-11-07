@@ -15,4 +15,7 @@
 %define GDT_DATA_3 17<<3
 %define GDT_VIDEO 18<<3
 
+%define GDT_IDX_TSS_INIT	19
+%define GDT_IDX_TSS_IDLE	20
+
 %endif

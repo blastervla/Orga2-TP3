@@ -13,6 +13,7 @@ global start
 extern GDT_DESC
 extern IDT_DESC
 extern idt_init
+extern gdt_init
 
 extern pic_reset
 extern pic_enable
@@ -20,6 +21,8 @@ extern pic_enable
 extern mmu_init
 extern mmu_initKernelDir
 extern mmu_initTaskDir
+
+extern tss_init
 
 ;; Saltear seccion de datos
 jmp start
@@ -68,9 +71,8 @@ start:
 
     ; Habilitar A20
     call A20_enable
-    
-    ; Cargar la GDT
 
+    ; Cargar la GDT
     lgdt [GDT_DESC]
     ; Setear el bit PE del registro CR0
     
@@ -98,7 +100,6 @@ BITS 32
 
     ; Imprimir mensaje de bienvenida
     print_text_pm start_pm_msg, start_pm_len, 0x07, SCREEN_W / 2 - start_rm_len / 2, SCREEN_H / 2
-
 
     ; Inicializar pantalla
     ; Screen Size : 80 x 50 
@@ -137,10 +138,11 @@ BITS 32
 
     ; Imprimir libretas de integrantes
     call print_group
-    
-    ; Inicializar tss
 
-    ; Inicializar tss de la tarea Idle
+    ; Inicializar la gdt
+    ; Inicializar tss
+    call tss_init
+    call gdt_init
 
     ; Inicializar el scheduler
 
@@ -154,11 +156,15 @@ BITS 32
     call pic_enable
 
     ; Cargar tarea inicial
+    mov ax, GDT_IDX_TSS_INIT << 3 ; Cargamos TR con la tarea inicial
+    ltr ax
 
     ; Habilitar interrupciones
     sti
 
     ; Saltar a la primera tarea: Idle
+    xchg bx, bx
+    jmp (GDT_IDX_TSS_IDLE << 3):0
 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF
