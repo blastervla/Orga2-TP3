@@ -163,7 +163,6 @@ BITS 32
     sti
 
     ; Saltar a la primera tarea: Idle
-    xchg bx, bx
     jmp (GDT_IDX_TSS_IDLE << 3):0
 
     ; Ciclar infinitamente (por si algo sale mal...)

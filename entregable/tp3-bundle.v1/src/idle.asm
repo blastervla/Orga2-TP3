@@ -9,7 +9,6 @@ BITS 32
 %include "print.mac"
 
 idle:
-    xchg bx, bx
     .loop:
         inc dword [number]
         cmp dword [number], 0x4
