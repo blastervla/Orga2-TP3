@@ -131,12 +131,25 @@ Implementamos las funciones:
 - Declaramos nuevas constantes para el uso en la GDT.
 
 #### tss.c
-Decidimos definir todas las tss's
+Decidimos definir todas las tss's ahora, haciendo futurología (Facu Linari nos
+dijo que en Ingeniería I nos van a enseñar a no hacer esto, pero todavía no la
+cursamos :P)
+- Implementamos `tss_init` para que inicialice todas las tss's de nuestro 
+  sistema (la de la tarea inicial, idle y de las pelotas con sus respectivos
+  handlers).
+- Decidimos guardarnos las tss's de las tareas y los handlers en un array para
+  poder recorrerlo más fácilmente luego.
+- Creamos un método `tss_new_ball` que recibe por parámetro el número de jugador
+  (A|B + tipo) y si es handler o no, y se encarga de devolver una tss 
+  inicializada de manera adecuada.
+- Creamos el método `tss_ball_reset`, que se encarga de reconfigurar el tss de
+  una de las tareas de pelotas previo a su ejecución (en particular por el stack
+  y un par de cosas más). Usaremos este método siempre que queramos lanzar una
+  nueva pelota o una tarea handler.
+
 
 #### gdt.c
 - Escribimos las gdt entries de todas las TSS que necesitaremos. Estas son 6 
   para las tareas y otras 6 para sus respectivos handlers, una más para la tarea
-  inicial y una última para la tarea _idle_. Decidimos definir estas TSS's desde
-  la posición 0xE600 (pues 0xE600 + 14 * 512 = 0x10000, la última posición del
-  kernel).
-- 
+  inicial y una última para la tarea _idle_. Para 
+- Colocamos el bit busy de la gdt entry de la tarea inicial en 1... [VER!]
