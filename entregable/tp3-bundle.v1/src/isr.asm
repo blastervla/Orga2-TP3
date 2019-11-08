@@ -109,7 +109,49 @@ _isr33:
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
 _isr47:
-    mov eax, 0x42
+    cmp eax, SYSCALL_INFORM_ACTION
+    je .talk
+    cmp eax, SYSCALL_SET_HANDLER
+    je .setHandler
+    cmp eax, SYSCALL_WHERE
+    je .where
+    cmp eax, SYSCALL_TALK
+    jne .end
+
+.talk:          ; Envía al sistema el mensaje almacenado en EBX, máximo 20 chars
+    ; 1. Obtenemos de sched el iTareaActual
+    ; 2. Tenemos definido (c) un mapita que dado el índice de la tarea actual,
+    ; devuelve la posición en pantalla en la que hay que escribir el msg.
+    ; 3. Escribimo´
+
+    ; TODO: Arreglar size de la TSS!!!!!!!
+    jmp .end
+
+.where:    ; Retorna los valores x e y correspondientes a la posición 
+                ; actual de la pelota en EBX y ECX (respectivamente). X va
+                ; entre 1 y 78 (siendo 1 el extremo donde originalmente se
+                ; lanzó la pelota). Y va de 1 a 40, 1 siendo la primera 
+                ; fila y 40 la última.
+    ; 1. Obtenemos el iTareaActual de sched.
+    ; 2. Le preguntamos a game cuál es la posición actual de la pelota en
+    ;    cuestión.
+
+    jmp .end
+
+.setHandler:    ; Registra en el sistema la dirección de memoria del handler
+                ; para la tarea actualmente en ejecución.
+    ; 1. Llamamos a la función setHandler de sched (hay que hacerla, va a
+    ; registrar en su vector interno el handler correspondiente).
+
+    jmp .end
+
+.informAction:  ; Este servicio se utiliza para retornar al sistema luego
+                ; de la ejecución de un handler. 
+    ; 1. Obtenemos iTareaActual de sched.
+    ; 2. Reportamos a game la acción que realizó la pelota actual.
+    ; 3. Somos losotro´
+
+.end:
     iret
 
 ;; Funciones Auxiliares

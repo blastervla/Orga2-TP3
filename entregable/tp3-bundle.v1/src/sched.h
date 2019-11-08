@@ -16,4 +16,6 @@ void sched_init();
 
 int16_t sched_nextTask();
 
+extern int iTareaActual;
+
 #endif	/* !__SCHED_H__ */
