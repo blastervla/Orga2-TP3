@@ -1,11 +1,32 @@
-## Steps to reproduce:
+Steps to reproduce
+------------------
+
 1. Compile and disassemble with line 61 of main.c with a value of `0`
 2. Compile and disassemble with line 61 of main.c with a value of `1`
 
-## Compilation command:
+Compilation command
+-------------------
 
 gcc -fno-pie -no-pie -m32 -g -ggdb -Wall -Werror -O0 -fno-stack-protector -ffreestanding -o main.o main.c
 
-## Disassemble:
+Disassemble
+-----------
 
 objdump -d -M "intel-mnemonic" main.o > disassembled.asm
+
+System information
+------------------
+
+$ ld --version
+GNU ld (GNU Binutils for Ubuntu) 2.30
+Copyright (C) 2018 Free Software Foundation, Inc.
+This program is free software; you may redistribute it under the terms of
+the GNU General Public License version 3 or (at your option) a later version.
+This program has absolutely no warranty.
+
+$ gcc --version
+gcc (Ubuntu 7.4.0-1ubuntu1~18.04.1) 7.4.0
+Copyright (C) 2017 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
