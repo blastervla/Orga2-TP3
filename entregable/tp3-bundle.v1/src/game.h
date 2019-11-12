@@ -13,8 +13,6 @@
 #include "mmu.h"
 #include "sched.h"
 
-typedef void (*f_handler_t)();
-
 typedef enum e_action {
     Up = 1,
     Center = 2,
@@ -22,5 +20,13 @@ typedef enum e_action {
 } e_action_t;
 
 void game_init();
+void game_executeFrame();
+
+void game_talk(const char *msg);
+
+void game_getCurrentX();
+void game_getCurrentY();
+
+void game_reportAction(e_action_t action);
 
 #endif  /* !__GAME_H__ */

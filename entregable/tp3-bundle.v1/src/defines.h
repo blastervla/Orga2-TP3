@@ -9,6 +9,17 @@
 #ifndef __DEFINES_H__
 #define __DEFINES_H__
 
+/* Pantalla */
+/* -------------------------------------------------------------------------- */
+#define SCREEN_W 80
+#define SCREEN_H 50
+#define BOARD_H 40
+#define BOARD_W 78
+
+#define PLAYER_SIZE 6
+#define PLAYER_A_GOAL 0
+#define PLAYER_B_GOAL 79
+
 /* Bool */
 /* -------------------------------------------------------------------------- */
 #define TRUE                    0x00000001
@@ -52,7 +63,7 @@
 #define PRIVILEDGE_LEVEL_SUPERVISOR 0
 #define PRIVILEDGE_LEVEL_TASK 1
 
-#define PLAYER uint8_t
+#define PLAYER uint32_t
 #define PLAYER_A_TIPO_1 0
 #define PLAYER_A_TIPO_2 1
 #define PLAYER_A_TIPO_3 2

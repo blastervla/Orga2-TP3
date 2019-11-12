@@ -6,18 +6,26 @@
 
 %include "print.mac"
 %include "colors.mac"
+%include "defines.mac"
 
 BITS 32
 
 sched_task_offset:     dd 0xFFFF
 sched_task_selector:   dw 0xFFFFFFFF
 
+current_clock: db 0
+
 ;; PIC
 extern pic_finish1
 extern pic_finish2
 
 ;; Sched
+extern sched_isHandler
 extern sched_nextTask
+
+;; Game
+extern game_executeFrame
+extern game_talk
 
 extern print_dec
 
@@ -78,6 +86,46 @@ ISR 30
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
 _isr32:
+    ; Llamar a sched_nextTask y efectivamente cargar la tarea!
+    mov cl, [current_clock]
+    cmp cl, 6
+    je .calculateAndIdle
+
+    inc cl
+    mov [current_clock], cl ; Incrementamos contador de tarea!
+
+    call sched_nextTask     ; Pedimos el selector tss de la siguiente tarea
+
+    mov bx, [sched_task_selector]
+    cmp bx, ax
+    je .end     ; Si son la misma tarea, no la cambiamos!!!
+
+    mov [sched_task_selector], ax
+
+    ; Hay que verificar si es un handler o no y resettearla de ser así
+    call sched_isHandler
+    cmp eax, 0
+    je .cargarTarea
+    ; Entonces tengo que restaurar la TSS!
+    call sched_getTareaActual
+    push eax
+    call tss_ball_handler_reset
+    sub esp, 4      ; Limpio el parámetro
+
+.cargarTarea:
+    jmp far [sched_task_offset]
+
+    jmp .end
+
+.calculateAndIdle:
+    mov [current_clock], 0
+    call game_executeFrame  ; Actualizamos la UI y calculamos todo
+
+    ; Ejecutamos la tarea Idle por el resto del ciclo
+    jmp (GDT_IDX_TSS_IDLE << 3):0
+
+.end:
+
     call nextClock
     call pic_finish1
     iret
@@ -85,21 +133,26 @@ _isr32:
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
 _isr33:
-    in al, 0x60
+    ; Item 3. d -------------------------------------------------------------
+    ; in al, 0x60
     ; 02 (1), 03 (2), 04 (3), 05 (4), 06 (5), 07 (6), 08 (7), 09 (8), 0a (9), 0b (0)
-    dec al ; Convertimos a decimal
+    ; dec al ; Convertimos a decimal
 
-    cmp eax, 10
-    jg .noPrint
+    ; cmp eax, 10
+    ; jg .noPrint
 
-    push C_BG_WHITE + C_FG_BLACK
-    push 0
-    push 79
-    push 1
-    push eax
-    call print_dec
+    ; push C_BG_WHITE + C_FG_BLACK
+    ; push 0
+    ; push 79
+    ; push 1
+    ; push eax
+    ; call print_dec
 
-    add esp, 20
+    ; add esp, 20
+    ; Item 3. d -------------------------------------------------------------
+
+    ; TODO: Tomar el input del user y realizar una acción en base a eso
+    ; Nota: Claramente vamos a tomar el input y saltar a game con eso como param
 
 .noPrint:
 
@@ -119,10 +172,9 @@ _isr47:
     jne .end
 
 .talk:          ; Envía al sistema el mensaje almacenado en EBX, máximo 20 chars
-    ; 1. Obtenemos de sched el iTareaActual
-    ; 2. Tenemos definido (c) un mapita que dado el índice de la tarea actual,
-    ; devuelve la posición en pantalla en la que hay que escribir el msg.
-    ; 3. Escribimo´
+    push ebx
+    call game_talk
+    sub esp, 4  ; Limpiamos el parámetro que pasamos antes
 
     ; TODO: Arreglar size de la TSS!!!!!!!
     jmp .end
@@ -132,16 +184,23 @@ _isr47:
                 ; entre 1 y 78 (siendo 1 el extremo donde originalmente se
                 ; lanzó la pelota). Y va de 1 a 40, 1 siendo la primera 
                 ; fila y 40 la última.
-    ; 1. Obtenemos el iTareaActual de sched.
-    ; 2. Le preguntamos a game cuál es la posición actual de la pelota en
-    ;    cuestión.
+    
+    ; Le preguntamos a game cuál es la posición actual de la pelota en
+    ; cuestión.
+    call game_getCurrentX
+    mov ebx, eax
+
+    call game_getCurrentY
+    mov ecx, eax
 
     jmp .end
 
 .setHandler:    ; Registra en el sistema la dirección de memoria del handler
                 ; para la tarea actualmente en ejecución.
-    ; 1. Llamamos a la función setHandler de sched (hay que hacerla, va a
-    ; registrar en su vector interno el handler correspondiente).
+
+    push ebx
+    call sched_registerHandler
+    sub esp, 4  ; Limpiamos el parámetro que pasamos antes
 
     jmp .end
 
@@ -150,6 +209,12 @@ _isr47:
     ; 1. Obtenemos iTareaActual de sched.
     ; 2. Reportamos a game la acción que realizó la pelota actual.
     ; 3. Somos losotro´
+
+    call sched_mafiallyValidateHandler
+
+    push ebx
+    call game_reportAction
+    sub esp, 4  ; Limpiamos el parámetro que pasamos antes
 
 .end:
     iret

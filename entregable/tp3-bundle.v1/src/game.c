@@ -6,8 +6,223 @@
 
 #include "game.h"
 
+uint32_t points_y = 41;
+
+uint32_t message_x[2] = {
+    3,
+    43,
+};
+
+uint32_t message_y[3] = {
+    46,
+    47,
+    48,
+};
+
+uint16_t message_color[2] = {
+    C_BG_RED + C_FG_WHITE,
+    C_BG_BLUE + C_FG_WHITE,
+};
+
+uint16_t bg_color = C_BG_LIGHT_GREY + C_FG_LIGHT_GREY;
+
+uint16_t ball_color[2] = {
+    C_BG_LIGHT_GREY + C_FG_RED,
+    C_BG_LIGHT_GREY + C_FG_BLUE,
+};
+
+uint16_t player_color[2] = {
+    C_BG_RED + C_FG_BLACK,
+    C_BG_BLUE + C_FG_CYAN,
+};
+
+uint32_t player_points[2];
+
+uint32_t player_x[2] = {
+    0,
+    79
+};
+uint32_t prev_player_y[2];
+uint32_t player_y[2];
+
+uint32_t prev_ball_x[6];
+uint32_t prev_ball_y[6];
+uint32_t ball_x[6];
+uint32_t ball_y[6];
+
+e_action_t ball_current_actions[6];
+short ball_current_directions_x[6];
+short ball_current_directions_y[6];
+
+char *ballChar = "o";
+char *missingBallChar = "X";
+char *playerBgChar = "@";
+
+/* ---------------------------- UI UTILS ---------------------------- */
+void printIfValid(char* msg, uint32_t x, uint32_t y, uint16_t color) {
+    if (x < BOARD_W && y < BOARD_H) {
+        print(msg, x, y, color);
+    }
+}
+
+void printPlayer(uint32_t x, uint32_t y, uint16_t color) {
+    for (int i = 0; i < PLAYER_SIZE; i++) {
+        printIfvalid(playerBgChar, x, y + i, color);
+    }
+}
+/* ---------------------------- UI UTILS ---------------------------- */
+
+void hitPlayerAGoal(uint32_t x, uint32_t y) {
+    // Devuelve true si está en la posición del goal de A y el jugador
+    // A no está en la posición de impacto de la pelota!
+    return x == PLAYER_A_GOAL && y < player_y[0] && y > player_y[0] + 6;
+}
+
+void hitPlayerBGoal(uint32_t x, uint32_t y) {
+    // Devuelve true si está en la posición del goal de A y el jugador
+    // A no está en la posición de impacto de la pelota!
+    return x == PLAYER_B_GOAL && y < player_y[1] && y > player_y[1] + 6;
+}
 
 void game_init() {
 }
 
+void executeFrameCalculations() {
+    for (int i = 0; i < 6; i++) {
+        uint32_t x = prev_ball_x[i];
+        uint32_t y = prev_ball_y[i];
 
+        e_action_t direction = ball_current_actions[i];
+        switch (direction) {
+            case Up:
+                y -= 1 * ball_current_directions_y[i];
+                break;
+
+            case Center:
+                // NO-OP, la pelota sigue moviéndose derecho
+                break;
+
+            case Down:
+                y += 1 * ball_current_directions_y[i];
+                break;
+        }
+
+        x += 1 * ball_current_directions_x[i];
+
+        if (hitPlayerAGoal(x, y)) {
+            // TODO: Matar la tarea de la pelota!
+            player_points[1]++;
+
+            ball_x[i] = 1000;
+            ball_y[i] = 1000; // Posiciones invalidas
+        } else if (hitPlayerBGoal(x, y)) {
+            // TODO: Matar la tarea de la pelota!
+            player_points[2]++;
+
+            ball_x[i] = 1000;
+            ball_y[i] = 1000; // Posiciones invalidas
+        } else {
+            ball_x[i] = x;
+            ball_y[i] = y;
+        }
+    }
+}
+
+void game_executeFrame() {
+    executeFrameCalculations();
+
+    // Pintar pelotas
+    for (int i = 0; i < 6; i++) {
+        // Limpiar anteriores
+        uint32_t x = prev_ball_x[i];
+        uint32_t y = prev_ball_y[i];
+        uint16_t color = bg_color;
+        printIfvalid(ballChar, x, y, color);
+
+        // Imprimir nuevas
+        x = ball_x[i];
+        y = ball_y[i];
+        color = ball_color[i];
+        printIfvalid(ballChar, x, y, color);
+        
+        // Actualizar pelotas previas
+        prev_ball_x[i] = x;
+        prev_ball_y[i] = y;
+    }
+
+    // Pintar paletas
+    for (int i = 0; i < 2; i++) {
+        // Limpiar anteriores
+        uint32_t x = player_x[i];
+        uint32_t y = prev_player_y[i];
+        uint16_t color = bg_color;
+        printPlayer(x, y, color);
+
+        // Imprimir nuevas
+        y = player_y[i];
+        color = player_color[i];
+        printPlayer(x, y, color);
+        
+        // Actualizar posición previa
+        prev_player_y[i] = y;
+    }
+
+    // Pintar puntos
+    for (int i = 0; i < 2; i++) {
+        // Limpiar anteriores
+        uint32_t x = message_x[i];
+        uint32_t y = points_y;
+        uint16_t color = message_color[i];
+
+        print_dec(player_points[i], 2, x, y, colors);
+    }
+
+    // Pintar pelotas disponibles
+    for (int i = 0; i < 6; i++) {
+        uint32_t x = message_x[i] + 10 + i;
+        uint32_t y = points_y;
+        uint16_t color = message_color[i];
+
+        if (ball_x[i] < BOARD_W) {
+            print(ballChar, x, y, color);
+        } else {
+            print(missingBallChar, x, y, color);
+        }
+    }
+}
+
+void game_talk(const char *msg) {
+    uint32_t currentBall = sched_getTareaActual();
+
+    // Truncamos texto, rellenamos con espacios para limpiar
+    char displayMsg[20];
+    for (uint8_t i = 0; i < 20; i++) {
+        char toWrite = ' ';
+        if (*msg != 0) {
+            toWrite = *msg;
+            msg++;
+        }
+        displayMsg[i] = toWrite;
+    }
+    
+    // Las 1ras 3 tareas son del Player A, las otras 3 del Player B
+    uint32_t x = message_x[currentBall / 3];
+    uint32_t y = message_x[currentBall % 3];
+    uint16_t color = message_color[currentBall / 3];
+    print(msg, x, y, color);
+}
+
+void game_getCurrentX() {
+    uint32_t currentBall = sched_getTareaActual();
+    return ball_x[currentBall];
+}
+
+void game_getCurrentY() {
+    uint32_t currentBall = sched_getTareaActual();
+    return ball_y[currentBall];
+}
+
+void game_reportAction(e_action_t action) {
+    uint32_t currentBall = sched_getTareaActual();
+    ball_current_actions[currentBall] = action;
+}

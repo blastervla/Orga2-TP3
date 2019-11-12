@@ -63,4 +63,7 @@ extern uint32_t tss_ball_esp0s[12];
 
 void tss_init();
 
+void tss_ball_reset(PLAYER player);
+void tss_ball_handler_reset(PLAYER player);
+
 #endif  /* !__TSS_H__ */
