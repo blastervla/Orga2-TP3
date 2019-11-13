@@ -123,10 +123,10 @@ void game_movePlayerDown(uint8_t player) {
 }
 
 void game_setDefaultBallDirections(PLAYER ballIndex) {
-    e_action_t ball_current_actions[ballIndex] = Center;
+    ball_current_actions[ballIndex] = Center;
     // El jugador A tiene direccion positiva por defecto, el B al reves
-    short ball_current_directions_x[ballIndex] = ballIndex / 2 == 0 ? 1 : -1;
-    short ball_current_directions_y[ballIndex] = 1;
+    ball_current_directions_x[ballIndex] = ballIndex / 3 == 0 ? 1 : -1;
+    ball_current_directions_y[ballIndex] = 1;
 }
 
 void game_launchBall(PLAYER ballType) {
@@ -135,8 +135,8 @@ void game_launchBall(PLAYER ballType) {
     // Configuramos las direcciones de la pelota y su posicion
     game_setDefaultBallDirections(ballType);
 
-    prev_ball_x[i] = player_x[ballType] + ball_current_directions_x[ballType];
-    prev_ball_y[i] = player_y[ballType] + PLAYER_SIZE / 2;
+    prev_ball_x[ballType] = player_x[ballType / 3] + ball_current_directions_x[ballType];
+    prev_ball_y[ballType] = player_y[ballType / 3] + PLAYER_SIZE / 2;
 }
 
 void game_init() {

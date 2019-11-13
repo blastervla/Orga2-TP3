@@ -20,6 +20,7 @@ void sched_init();
 
 int16_t sched_nextTask();
 
+void sched_newBall(PLAYER ballType);
 void sched_registerHandler(f_handler_t* handler);
 
 uint32_t sched_getTareaActual();
