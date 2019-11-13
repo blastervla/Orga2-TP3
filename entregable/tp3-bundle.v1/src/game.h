@@ -24,9 +24,11 @@ void game_executeFrame();
 
 void game_talk(const char *msg);
 
-void game_getCurrentX();
-void game_getCurrentY();
+uint32_t game_getCurrentX();
+uint32_t game_getCurrentY();
 
-void game_reportAction(e_action_t action);
+void game_informAction(e_action_t action);
+
+void game_kbInput(uint32_t input)
 
 #endif  /* !__GAME_H__ */

@@ -57,11 +57,16 @@
 #define PAGE_SIZE 			4 * 1024 // 4K
 /* Misc */
 /* -------------------------------------------------------------------------- */
+#define NULL 0
+
 #define TASK_CODE_SIZE			2 * PAGE_SIZE
 
 #define PRIVILEDGE_LEVEL uint8_t
 #define PRIVILEDGE_LEVEL_SUPERVISOR 0
 #define PRIVILEDGE_LEVEL_TASK 1
+
+#define PLAYER_A 0
+#define PLAYER_B 1
 
 #define PLAYER uint32_t
 #define PLAYER_A_TIPO_1 0
@@ -142,5 +147,33 @@
 
 #define PDE_INDEX(virtual) (virtual >> 22)
 #define PTE_INDEX(virtual) (virtual >> 12)
+
+/* KEYBOARD MAPPINGS */
+/* -------------------------------------------------------------------------- */
+// http://quadibloc.com/comp/scan.htm
+
+#define SCAN_CODE_W 0x11 
+#define SCAN_CODE_S 0x1F
+#define SCAN_CODE_Z 0x2C
+#define SCAN_CODE_X 0x2D
+#define SCAN_CODE_C 0x2E
+#define SCAN_CODE_I 0x17
+#define SCAN_CODE_K 0x25
+#define SCAN_CODE_B 0x30
+#define SCAN_CODE_N 0x31
+#define SCAN_CODE_M 0x32
+
+#define PLAYER_A_UP			0 // SCAN_CODE_W
+#define PLAYER_A_DOWN		1 // SCAN_CODE_S
+#define PLAYER_A_BALL_1		2 // SCAN_CODE_Z
+#define PLAYER_A_BALL_2		3 // SCAN_CODE_X
+#define PLAYER_A_BALL_3		4 // SCAN_CODE_C
+#define PLAYER_B_UP			5 // SCAN_CODE_I
+#define PLAYER_B_DOWN		6 // SCAN_CODE_K
+#define PLAYER_B_BALL_1		7 // SCAN_CODE_B
+#define PLAYER_B_BALL_2		8 // SCAN_CODE_N
+#define PLAYER_B_BALL_3		9 // SCAN_CODE_M
+
+#define BREAK_CODE(s) 0x80 ^ s
 
 #endif  /* !__DEFINES_H__ */

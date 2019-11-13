@@ -22,16 +22,26 @@ extern pic_finish2
 ;; Sched
 extern sched_isHandler
 extern sched_nextTask
+extern sched_getTareaActual
+extern sched_registerHandler
+extern sched_killIfNotHandler
+extern sched_killIfHandler
 
 ;; Game
 extern game_executeFrame
 extern game_talk
+extern game_getCurrentX
+extern game_getCurrentY
+extern game_informAction
+extern game_kbInput
 
 extern print_dec
 
 global _isr32
 global _isr33
 global _isr47
+
+global saltarAIdle
 
 ;;
 ;; Definición de MACROS
@@ -94,6 +104,10 @@ _isr32:
     inc cl
     mov [current_clock], cl ; Incrementamos contador de tarea!
 
+    ; Si la tarea actual es un handler, es porque nunca llamò a inform action,
+    ; entonces hay que matarla.
+    call sched_killIfHandler
+
     call sched_nextTask     ; Pedimos el selector tss de la siguiente tarea
 
     mov bx, [sched_task_selector]
@@ -102,27 +116,17 @@ _isr32:
 
     mov [sched_task_selector], ax
 
-    ; Hay que verificar si es un handler o no y resettearla de ser así
-    call sched_isHandler
-    cmp eax, 0
-    je .cargarTarea
-    ; Entonces tengo que restaurar la TSS!
-    call sched_getTareaActual
-    push eax
-    call tss_ball_handler_reset
-    sub esp, 4      ; Limpio el parámetro
-
 .cargarTarea:
     jmp far [sched_task_offset]
 
     jmp .end
 
 .calculateAndIdle:
-    mov [current_clock], 0
+    mov byte [current_clock], 0
     call game_executeFrame  ; Actualizamos la UI y calculamos todo
 
     ; Ejecutamos la tarea Idle por el resto del ciclo
-    jmp (GDT_IDX_TSS_IDLE << 3):0
+    call saltarAIdle
 
 .end:
 
@@ -149,12 +153,16 @@ _isr33:
     ; call print_dec
 
     ; add esp, 20
+;.noPrint:
     ; Item 3. d -------------------------------------------------------------
 
     ; TODO: Tomar el input del user y realizar una acción en base a eso
     ; Nota: Claramente vamos a tomar el input y saltar a game con eso como param
-
-.noPrint:
+    xor eax, eax
+    in al, 0x60
+    push eax
+    call game_kbInput
+    add esp, 4          ; Limpiamos
 
     call pic_finish1
     iret
@@ -174,7 +182,7 @@ _isr47:
 .talk:          ; Envía al sistema el mensaje almacenado en EBX, máximo 20 chars
     push ebx
     call game_talk
-    sub esp, 4  ; Limpiamos el parámetro que pasamos antes
+    add esp, 4  ; Limpiamos el parámetro que pasamos antes
 
     ; TODO: Arreglar size de la TSS!!!!!!!
     jmp .end
@@ -200,7 +208,7 @@ _isr47:
 
     push ebx
     call sched_registerHandler
-    sub esp, 4  ; Limpiamos el parámetro que pasamos antes
+    add esp, 4  ; Limpiamos el parámetro que pasamos antes
 
     jmp .end
 
@@ -210,11 +218,22 @@ _isr47:
     ; 2. Reportamos a game la acción que realizó la pelota actual.
     ; 3. Somos losotro´
 
-    call sched_mafiallyValidateHandler
+    call sched_killIfNotHandler
 
     push ebx
-    call game_reportAction
-    sub esp, 4  ; Limpiamos el parámetro que pasamos antes
+    call game_informAction
+    add esp, 4  ; Limpiamos el parámetro que pasamos antes
+
+    call sched_nextTask     ; Pedimos el selector tss de la siguiente tarea
+
+    mov bx, [sched_task_selector]
+    cmp bx, ax
+    je .end     ; Si son la misma tarea, no la cambiamos!!!
+
+    mov [sched_task_selector], ax
+
+.cargarTarea:
+    jmp far [sched_task_offset]
 
 .end:
     iret
@@ -236,3 +255,8 @@ nextClock:
                 print_text_pm ebx, 1, 0x0f, 49, 79
                 popad
         ret
+
+saltarAIdle:
+    jmp (GDT_IDX_TSS_IDLE << 3):0
+
+    ret

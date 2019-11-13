@@ -13,10 +13,28 @@ int16_t tareas[12];
 // int tarea actual
 uint8_t iTareaActual = 0;
 
+int16_t handlersTSS[6] = {
+	GDT_IDX_TSS_PA_T1_H << 3,
+	GDT_IDX_TSS_PA_T2_H << 3,
+	GDT_IDX_TSS_PA_T3_H << 3,
+	GDT_IDX_TSS_PB_T1_H << 3,
+	GDT_IDX_TSS_PB_T2_H << 3,
+	GDT_IDX_TSS_PB_T3_H << 3,
+};
+
 f_handler_t *handlers[6];
+
+extern void saltarAIdle();
 
 int sched_isHandler() {
 	return iTareaActual % 2 == 0;
+}
+
+void task_inc() {
+	iTareaActual++;
+	if (iTareaActual == 12) {
+		iTareaActual = 0;
+	}
 }
 
 void sched_init() {
@@ -26,16 +44,14 @@ void sched_init() {
 }
 
 int16_t sched_nextTask() {
-	if (sched_isHandler()) {
-		// Estoy ejecutando un handler, este es un estado ilegal!
-		// Hay que matar a la tarea dueña del handler (iTareaActual + 1)
-
-		// TODO: Matar a la tarea actual, iTareaActual + 1
-	}
 	task_inc();
 	// Si debería ejecutar un handler y no lo tengo declarado, voy a la task directo:
 	if (sched_isHandler() && tareas[iTareaActual] == 0) {
 		iTareaActual++;
+	} else if (sched_isHandler()) {
+		// Resetteo el handler antes de ejecutarlo!
+		PLAYER p = sched_getTareaActual();
+		tss_ball_handler_reset(p, handlers[p]);
 	}
 
 	// Si no hay tarea definida, simplemente ejecuto la idle
@@ -45,11 +61,12 @@ int16_t sched_nextTask() {
   	return tareas[iTareaActual];
 }
 
-void task_inc() {
-	iTareaActual++;
-	if (iTareaActual == 12) {
-		iTareaActual = 0;
-	}
+void sched_newBall(PLAYER ballType) {
+	/*	TODO!
+		1. Obtenemos la TSS de la pelota
+		2. La ponemos en la posición correcta del vector
+		3. Resetteamos la TSS!
+	*/
 }
 
 uint32_t sched_getTareaActual() {
@@ -60,25 +77,37 @@ uint32_t sched_getTareaActual() {
 }
 
 void sched_registerHandler(f_handler_t *handler) {
+	sched_killIfHandler();
 	// El handler siempre está en el índice anterior a la tarea:
 	uint8_t handlerIndex = iTareaActual - 1;
 	if (handlers[handlerIndex] != NULL) {
 		// Entonces ya estaba setteado el handler!
-
-		// TODO: Matar tarea actual, usar iTareaActual
+		sched_makeItLookLikeAnAccident();
 	} else {
-		handlers[handlerIndex] = handler;
+		uint32_t handlerNumber = sched_getTareaActual();
+		tareas[handlerIndex] = handlersTSS[handlerNumber];
+		handlers[handlerNumber] = handler;
 	}
 }
 
-void sched_mafiallyValidateHandler() {
+void sched_killIfNotHandler() {
 	if (!sched_isHandler()) {
 		// Entonces no es un handler!
-		
-		// TODO: Matar tarea actual, usar iTareaActual
-	} else {
-		// Como es un handler, siempre va a estar bien definido
-		// hacer esto:
-		task_inc();
+		sched_makeItLookLikeAnAccident();
 	}
+}
+
+void sched_killIfHandler() {
+	if (sched_isHandler()) {
+		// Entonces es un handler!
+		task_inc(); // Normalizamos el estado del scheduler
+		sched_makeItLookLikeAnAccident();
+	}
+}
+
+void sched_makeItLookLikeAnAccident() {
+	tareas[iTareaActual - 1] = NULL;
+	tareas[iTareaActual] = NULL;
+
+	saltarAIdle();
 }

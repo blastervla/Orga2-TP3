@@ -58,6 +58,21 @@ char *ballChar = "o";
 char *missingBallChar = "X";
 char *playerBgChar = "@";
 
+uint32_t keys[10] = {
+    SCAN_CODE_W,
+    SCAN_CODE_S,
+    SCAN_CODE_Z,
+    SCAN_CODE_X,
+    SCAN_CODE_C,
+    SCAN_CODE_I,
+    SCAN_CODE_K,
+    SCAN_CODE_B,
+    SCAN_CODE_N,
+    SCAN_CODE_M,
+};
+
+uint32_t keyPresses[10];
+
 /* ---------------------------- UI UTILS ---------------------------- */
 void printIfValid(char* msg, uint32_t x, uint32_t y, uint16_t color) {
     if (x < BOARD_W && y < BOARD_H) {
@@ -67,27 +82,48 @@ void printIfValid(char* msg, uint32_t x, uint32_t y, uint16_t color) {
 
 void printPlayer(uint32_t x, uint32_t y, uint16_t color) {
     for (int i = 0; i < PLAYER_SIZE; i++) {
-        printIfvalid(playerBgChar, x, y + i, color);
+        printIfValid(playerBgChar, x, y + i, color);
     }
 }
 /* ---------------------------- UI UTILS ---------------------------- */
 
-void hitPlayerAGoal(uint32_t x, uint32_t y) {
+uint8_t hitPlayerAGoal(uint32_t x, uint32_t y) {
     // Devuelve true si está en la posición del goal de A y el jugador
     // A no está en la posición de impacto de la pelota!
     return x == PLAYER_A_GOAL && y < player_y[0] && y > player_y[0] + 6;
 }
 
-void hitPlayerBGoal(uint32_t x, uint32_t y) {
+uint8_t hitPlayerBGoal(uint32_t x, uint32_t y) {
     // Devuelve true si está en la posición del goal de A y el jugador
     // A no está en la posición de impacto de la pelota!
     return x == PLAYER_B_GOAL && y < player_y[1] && y > player_y[1] + 6;
 }
 
+void game_movePlayerUp(uint8_t player) {
+    // Mueve el jugador para arriba, de ser posible
+    if (player_y[player] > 0) {
+        player_y[player]--;
+    }
+}
+
+void game_movePlayerDown(uint8_t player) {
+    // Mueve el jugador para abajo, de ser posible
+    if (player_y[player] < BOARD_H - PLAYER_SIZE) {
+        player_y[player]++;
+    }
+}
+
+void game_launchBall() {
+    /*
+        1. Llamar a sched_newBall
+        2. Configurar la posición de la pelota!
+    */
+}
+
 void game_init() {
 }
 
-void executeFrameCalculations() {
+void executeBallCalculations() {
     for (int i = 0; i < 6; i++) {
         uint32_t x = prev_ball_x[i];
         uint32_t y = prev_ball_y[i];
@@ -110,14 +146,16 @@ void executeFrameCalculations() {
         x += 1 * ball_current_directions_x[i];
 
         if (hitPlayerAGoal(x, y)) {
-            // TODO: Matar la tarea de la pelota!
-            player_points[1]++;
+            // Matar la tarea de la pelota!
+            sched_makeItLookLikeAnAccident();
+            player_points[PLAYER_B]++;
 
             ball_x[i] = 1000;
             ball_y[i] = 1000; // Posiciones invalidas
         } else if (hitPlayerBGoal(x, y)) {
-            // TODO: Matar la tarea de la pelota!
-            player_points[2]++;
+            // Matar la tarea de la pelota!
+            sched_makeItLookLikeAnAccident();
+            player_points[PLAYER_A]++;
 
             ball_x[i] = 1000;
             ball_y[i] = 1000; // Posiciones invalidas
@@ -128,8 +166,26 @@ void executeFrameCalculations() {
     }
 }
 
+void game_executeInputCalculations() {
+    if (keyPresses[PLAYER_A_UP]) game_movePlayerUp(PLAYER_A);
+    if (keyPresses[PLAYER_A_DOWN]) game_movePlayerDown(PLAYER_A);
+    if (keyPresses[PLAYER_A_B1]) game_launchBall(PLAYER_A_TIPO_1);
+    if (keyPresses[PLAYER_A_B2]) game_launchBall(PLAYER_A_TIPO_2);
+    if (keyPresses[PLAYER_A_B3]) game_launchBall(PLAYER_A_TIPO_3);
+    if (keyPresses[PLAYER_B_UP]) game_movePlayerUp(PLAYER_B);
+    if (keyPresses[PLAYER_B_DOWN]) game_movePlayerDown(PLAYER_B);
+    if (keyPresses[PLAYER_B_B1]) game_launchBall(PLAYER_B_TIPO_1);
+    if (keyPresses[PLAYER_B_B2]) game_launchBall(PLAYER_B_TIPO_2);
+    if (keyPresses[PLAYER_B_B3]) game_launchBall(PLAYER_B_TIPO_3);
+}
+
+void game_executeFrameCalculations() {
+    game_executeBallCalculations();
+    game_executeInputCalculations();
+}
+
 void game_executeFrame() {
-    executeFrameCalculations();
+    game_executeFrameCalculations();
 
     // Pintar pelotas
     for (int i = 0; i < 6; i++) {
@@ -137,13 +193,13 @@ void game_executeFrame() {
         uint32_t x = prev_ball_x[i];
         uint32_t y = prev_ball_y[i];
         uint16_t color = bg_color;
-        printIfvalid(ballChar, x, y, color);
+        printIfValid(ballChar, x, y, color);
 
         // Imprimir nuevas
         x = ball_x[i];
         y = ball_y[i];
         color = ball_color[i];
-        printIfvalid(ballChar, x, y, color);
+        printIfValid(ballChar, x, y, color);
         
         // Actualizar pelotas previas
         prev_ball_x[i] = x;
@@ -174,7 +230,7 @@ void game_executeFrame() {
         uint32_t y = points_y;
         uint16_t color = message_color[i];
 
-        print_dec(player_points[i], 2, x, y, colors);
+        print_dec(player_points[i], 2, x, y, color);
     }
 
     // Pintar pelotas disponibles
@@ -183,7 +239,7 @@ void game_executeFrame() {
         uint32_t y = points_y;
         uint16_t color = message_color[i];
 
-        if (ball_x[i] < BOARD_W) {
+        if (ball_x[i] >= BOARD_W) {
             print(ballChar, x, y, color);
         } else {
             print(missingBallChar, x, y, color);
@@ -207,22 +263,34 @@ void game_talk(const char *msg) {
     
     // Las 1ras 3 tareas son del Player A, las otras 3 del Player B
     uint32_t x = message_x[currentBall / 3];
-    uint32_t y = message_x[currentBall % 3];
+    uint32_t y = message_y[currentBall % 3];
     uint16_t color = message_color[currentBall / 3];
-    print(msg, x, y, color);
+    print(displayMsg, x, y, color);
 }
 
-void game_getCurrentX() {
+uint32_t game_getCurrentX() {
     uint32_t currentBall = sched_getTareaActual();
     return ball_x[currentBall];
 }
 
-void game_getCurrentY() {
+uint32_t game_getCurrentY() {
     uint32_t currentBall = sched_getTareaActual();
     return ball_y[currentBall];
 }
 
-void game_reportAction(e_action_t action) {
+void game_informAction(e_action_t action) {
     uint32_t currentBall = sched_getTareaActual();
     ball_current_actions[currentBall] = action;
+}
+
+
+void game_kbInput(uint32_t input) {
+    // Vemos que tecla se està presionando
+    for(int i = 0; i < 10; i++) {
+        if(keys[i] == input) {
+            keyPresses[i] = 1;
+        } else if (BREAK_CODE(keys[i]) == input) {
+            keyPresses[i] = 0;
+        }
+    }
 }

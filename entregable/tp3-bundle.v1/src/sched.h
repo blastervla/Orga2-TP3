@@ -20,12 +20,17 @@ void sched_init();
 
 int16_t sched_nextTask();
 
-void sched_registerHandler(f_handler_t *handler);
+void sched_registerHandler(f_handler_t* handler);
 
 uint32_t sched_getTareaActual();
 
 // Checkea que la tarea actualmente en ejecución es un handler,
 // si no lo es, la mata ◉ _ ◉
-void sched_mafiallyValidateHandler();
+void sched_killIfNotHandler();
+void sched_killIfHandler();
+
+// Mata a la tarea actual junto con su handler.
+// Pre: La tarea actual es una pelota.
+void sched_makeItLookLikeAnAccident();
 
 #endif	/* !__SCHED_H__ */
