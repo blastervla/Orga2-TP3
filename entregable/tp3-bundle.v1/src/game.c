@@ -123,7 +123,7 @@ void game_launchBall() {
 void game_init() {
 }
 
-void executeBallCalculations() {
+void game_executeBallCalculations() {
     for (int i = 0; i < 6; i++) {
         uint32_t x = prev_ball_x[i];
         uint32_t y = prev_ball_y[i];
@@ -169,14 +169,14 @@ void executeBallCalculations() {
 void game_executeInputCalculations() {
     if (keyPresses[PLAYER_A_UP]) game_movePlayerUp(PLAYER_A);
     if (keyPresses[PLAYER_A_DOWN]) game_movePlayerDown(PLAYER_A);
-    if (keyPresses[PLAYER_A_B1]) game_launchBall(PLAYER_A_TIPO_1);
-    if (keyPresses[PLAYER_A_B2]) game_launchBall(PLAYER_A_TIPO_2);
-    if (keyPresses[PLAYER_A_B3]) game_launchBall(PLAYER_A_TIPO_3);
+    if (keyPresses[PLAYER_A_BALL_1]) game_launchBall(PLAYER_A_TIPO_1);
+    if (keyPresses[PLAYER_A_BALL_2]) game_launchBall(PLAYER_A_TIPO_2);
+    if (keyPresses[PLAYER_A_BALL_3]) game_launchBall(PLAYER_A_TIPO_3);
     if (keyPresses[PLAYER_B_UP]) game_movePlayerUp(PLAYER_B);
     if (keyPresses[PLAYER_B_DOWN]) game_movePlayerDown(PLAYER_B);
-    if (keyPresses[PLAYER_B_B1]) game_launchBall(PLAYER_B_TIPO_1);
-    if (keyPresses[PLAYER_B_B2]) game_launchBall(PLAYER_B_TIPO_2);
-    if (keyPresses[PLAYER_B_B3]) game_launchBall(PLAYER_B_TIPO_3);
+    if (keyPresses[PLAYER_B_BALL_1]) game_launchBall(PLAYER_B_TIPO_1);
+    if (keyPresses[PLAYER_B_BALL_2]) game_launchBall(PLAYER_B_TIPO_2);
+    if (keyPresses[PLAYER_B_BALL_3]) game_launchBall(PLAYER_B_TIPO_3);
 }
 
 void game_executeFrameCalculations() {

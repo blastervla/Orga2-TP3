@@ -174,6 +174,6 @@
 #define PLAYER_B_BALL_2		8 // SCAN_CODE_N
 #define PLAYER_B_BALL_3		9 // SCAN_CODE_M
 
-#define BREAK_CODE(s) 0x80 ^ s
+#define BREAK_CODE(s) (0x80 ^ s)
 
 #endif  /* !__DEFINES_H__ */
