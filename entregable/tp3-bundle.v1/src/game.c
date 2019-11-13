@@ -114,7 +114,7 @@ void game_movePlayerDown(uint8_t player) {
 }
 
 void game_launchBall() {
-    /*
+    /*  TODO!
         1. Llamar a sched_newBall
         2. Configurar la posición de la pelota!
     */
