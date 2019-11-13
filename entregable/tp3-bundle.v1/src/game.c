@@ -267,9 +267,9 @@ void game_executeFrame() {
         uint16_t color = message_color[i];
 
         if (ball_x[i] >= BOARD_W) {
-            print(ballChar, x, y, color);
+            printIfValid(ballChar, x, y, color);
         } else {
-            print(missingBallChar, x, y, color);
+            printIfValid(missingBallChar, x, y, color);
         }
     }
 }

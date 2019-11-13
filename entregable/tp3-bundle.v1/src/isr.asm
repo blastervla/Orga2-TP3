@@ -110,7 +110,7 @@ _isr32:
 
     call sched_nextTask     ; Pedimos el selector tss de la siguiente tarea
 
-    mov bx, [sched_task_selector]
+    str bx
     cmp bx, ax
     je .end     ; Si son la misma tarea, no la cambiamos!!!
 
@@ -226,7 +226,7 @@ _isr47:
 
     call sched_nextTask     ; Pedimos el selector tss de la siguiente tarea
 
-    mov bx, [sched_task_selector]
+    str bx
     cmp bx, ax
     je .end     ; Si son la misma tarea, no la cambiamos!!!
 
@@ -257,6 +257,11 @@ nextClock:
         ret
 
 saltarAIdle:
+    str bx
+    cmp bx, (GDT_IDX_TSS_IDLE << 3)
+    je .end     ; Si ya estamos ejecutando al idle, no la cambiamos!
+
     jmp (GDT_IDX_TSS_IDLE << 3):0
 
+.end:
     ret

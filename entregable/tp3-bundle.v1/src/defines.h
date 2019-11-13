@@ -14,7 +14,7 @@
 #define SCREEN_W 80
 #define SCREEN_H 50
 #define BOARD_H 40
-#define BOARD_W 78
+#define BOARD_W 80
 
 #define PLAYER_SIZE 6
 #define PLAYER_A_GOAL 0
