@@ -36,14 +36,23 @@ uint16_t player_color[2] = {
     C_BG_BLUE + C_FG_CYAN,
 };
 
-uint32_t player_points[2];
+uint32_t player_points[2] = {
+    0,
+    0
+};
 
 uint32_t player_x[2] = {
     0,
     79
 };
-uint32_t prev_player_y[2];
-uint32_t player_y[2];
+uint32_t prev_player_y[2] = {
+    0,
+    0
+};
+uint32_t player_y[2] = {
+    0,
+    0
+};
 
 uint32_t prev_ball_x[6];
 uint32_t prev_ball_y[6];
@@ -113,14 +122,32 @@ void game_movePlayerDown(uint8_t player) {
     }
 }
 
-void game_launchBall() {
-    /*  TODO!
-        1. Llamar a sched_newBall
-        2. Configurar la posición de la pelota!
-    */
+void game_setDefaultBallDirections(PLAYER ballIndex) {
+    e_action_t ball_current_actions[ballIndex] = Center;
+    // El jugador A tiene direccion positiva por defecto, el B al reves
+    short ball_current_directions_x[ballIndex] = ballIndex / 2 == 0 ? 1 : -1;
+    short ball_current_directions_y[ballIndex] = 1;
+}
+
+void game_launchBall(PLAYER ballType) {
+    sched_newBall(ballType);
+
+    // Configuramos las direcciones de la pelota y su posicion
+    game_setDefaultBallDirections(ballType);
+
+    prev_ball_x[i] = player_x[ballType] + ball_current_directions_x[ballType];
+    prev_ball_y[i] = player_y[ballType] + PLAYER_SIZE / 2;
 }
 
 void game_init() {
+    for (uint32_t i = 0; i < 6; i++) {
+        prev_ball_x[i] = 1000;
+        prev_ball_y[i] = 1000;
+        ball_x[i] = 1000;
+        ball_y[i] = 1000;
+
+        game_setDefaultBallDirections(i);
+    }
 }
 
 void game_executeBallCalculations() {

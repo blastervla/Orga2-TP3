@@ -24,6 +24,9 @@ extern mmu_initTaskDir
 
 extern tss_init
 
+extern sched_init
+extern game_init
+
 ;; Saltear seccion de datos
 jmp start
 
@@ -145,6 +148,7 @@ BITS 32
     call gdt_init
 
     ; Inicializar el scheduler
+    call sched_init
 
     ; Inicializar la IDT
     call idt_init
@@ -161,6 +165,9 @@ BITS 32
 
     ; Habilitar interrupciones
     sti
+
+    ; Inicializar juego
+    call game_init
 
     ; Saltar a la primera tarea: Idle
     jmp (GDT_IDX_TSS_IDLE << 3):0

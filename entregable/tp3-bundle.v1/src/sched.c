@@ -13,6 +13,15 @@ int16_t tareas[12];
 // int tarea actual
 uint8_t iTareaActual = 0;
 
+int16_t ballsTSS[6] = {
+	GDT_IDX_TSS_PA_T1 << 3,
+	GDT_IDX_TSS_PA_T2 << 3,
+	GDT_IDX_TSS_PA_T3 << 3,
+	GDT_IDX_TSS_PB_T1 << 3,
+	GDT_IDX_TSS_PB_T2 << 3,
+	GDT_IDX_TSS_PB_T3 << 3,
+};
+
 int16_t handlersTSS[6] = {
 	GDT_IDX_TSS_PA_T1_H << 3,
 	GDT_IDX_TSS_PA_T2_H << 3,
@@ -62,11 +71,13 @@ int16_t sched_nextTask() {
 }
 
 void sched_newBall(PLAYER ballType) {
-	/*	TODO!
+	/*	
 		1. Obtenemos la TSS de la pelota
 		2. La ponemos en la posición correcta del vector
 		3. Resetteamos la TSS!
 	*/
+	tareas[ballType * 2 + 1] = ballsTSS[ballType];
+	tss_ball_reset(ballType);
 }
 
 uint32_t sched_getTareaActual() {
