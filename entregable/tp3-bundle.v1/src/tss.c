@@ -53,6 +53,7 @@ tss tss_idle = (tss) {
 
 tss tss_ball_tasks[12];
 uint32_t tss_ball_esp0s[12];
+uint32_t tss_ball_page_dirs[6];
 
 tss tss_new_ball (PLAYER player, uint8_t isHandler);
 
@@ -69,6 +70,10 @@ void tss_init() {
     	// (que van de abajo para arriba)
     	tss_ball_esp0s[i] = mmu_nextFreeKernelPage() + PAGE_SIZE;
     }
+
+	for (uint32_t i = 0; i < 6; ++i) {
+		tss_ball_page_dirs[i] = mmu_initTaskDir(i);
+	}
 
 	tss_ball_tasks[0] = tss_new_ball(PLAYER_A_TIPO_1, 0);
 	tss_ball_tasks[1] = tss_new_ball(PLAYER_A_TIPO_1, 1);
@@ -89,7 +94,7 @@ tss tss_new_ball (PLAYER player, uint8_t isHandler) {
 		(uint16_t)  0,	// ptl;
     	(uint16_t)  0,	// unused0;
     	(uint32_t)  tss_ball_esp0s[player * 2 + (isHandler ? 1 : 0)],	//   esp0;
-    	(uint16_t)  GDT_DATA_3 << 3,	// ss0;
+    	(uint16_t)  GDT_DATA_0 << 3,	// ss0;
     	(uint16_t)  0,	// unused1;
     	(uint32_t)  0,	//   esp1;
     	(uint16_t)  0,	// ss1;
@@ -97,9 +102,9 @@ tss tss_new_ball (PLAYER player, uint8_t isHandler) {
     	(uint32_t)  0,	//   esp2;
     	(uint16_t)  0,	// ss2;
     	(uint16_t)  0,	// unused3;
-    	(uint32_t)  mmu_initTaskDir(player),	//   cr3;
+    	(uint32_t)  tss_ball_page_dirs[player],	//   cr3;
     	(uint32_t)  TASK_CODE_ADDR,	//   eip;
-    	(uint32_t)  0,	//   eflags;
+    	(uint32_t)  0x202,	//   eflags;
     	(uint32_t)  0,	//   eax;
     	(uint32_t)  0,	//   ecx;
     	(uint32_t)  0,	//   edx;

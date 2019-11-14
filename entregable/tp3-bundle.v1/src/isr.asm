@@ -115,9 +115,11 @@ _isr32:
     je .end     ; Si son la misma tarea, no la cambiamos!!!
 
     mov [sched_task_selector], ax
+    xchg bx, bx
 
 .cargarTarea:
     jmp far [sched_task_offset]
+    xchg bx, bx
 
     jmp .end
 
