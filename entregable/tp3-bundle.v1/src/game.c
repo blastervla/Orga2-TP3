@@ -369,11 +369,13 @@ void game_showDebugInfo(uint32_t exception);
 
 void game_kbInput(uint32_t input) {
     if (input == SCAN_CODE_Y) {
-        game_showDebugInfo(99);
+        // Descomentar esto para probar fácil: ---
+        game_showDebugInfo(99);              //
+        // ---------------------------------------
         // Toggleamos el modo debug
         if (debug_mode_on && debug_chart_shown) {
             // Hay que restaurar la pantalla y seguir con el juego!
-            restore_screen(saved_screen);
+            restore_screen(&saved_screen);
             debug_chart_shown = 0;
         } else {
             debug_mode_on = debug_mode_on ? 0 : 1;
@@ -394,7 +396,7 @@ void game_kbInput(uint32_t input) {
 char *get_exception_str(uint32_t exception);
 
 void game_showDebugInfo(uint32_t exception) {
-    save_screen(saved_screen);
+    save_screen(&saved_screen);
 
     screen_drawBox(1, BOARD_W / 2 - 15, BOARD_H - 1, 30, '@', C_BG_BLACK + C_FG_LIGHT_GREY);
     screen_drawBox(2, BOARD_W / 2 - 14, BOARD_H - 3, 28, '@', C_BG_BLACK + C_FG_BLACK);
@@ -466,22 +468,8 @@ void game_showDebugInfo(uint32_t exception) {
     print(      cr4_str,     BOARD_W / 2 + 1,   12,  C_BG_LIGHT_GREY + C_FG_BLACK);
     print_hex(  rcr4(), 8,   BOARD_W / 2 + 6,   12,  C_BG_LIGHT_GREY + C_FG_WHITE);
 
-    // eax_str
-    // ebx_str
-    // ecx_str
-    // edx_str
-    // esi_str
-    // edi_str
-    // ebp_str
-    // esp_str
-    // eip_str
-    // cs_str
-    // ds_str
-    // es_str
-    // fs_str
-    // gs_str
-    // ss_str
-    // eflags_str
+    // TODO: Preguntar --> Hace falta el stack? Alta paja...
+    //       Also, el EIP tiene sentido? Es un quilombo...
 
     debug_chart_shown = 1;
 }
