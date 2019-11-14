@@ -198,16 +198,16 @@ draw_screen:
     push ebp
     mov ebp, esp
 
-    ; Barras
-    mov ecx, BOARD_H/ 2 + 3
-    .bar_loop:
-        seg_print_text_pm single_char, single_char_len, C_BG_RED + C_FG_BLACK, ecx, 0
-        seg_print_text_pm single_char, single_char_len, C_BG_BLUE + C_FG_CYAN, ecx, 79
+    ; Barras --------------------------------------
+    ; mov ecx, BOARD_H/ 2 + 3
+    ; .bar_loop:
+    ;     seg_print_text_pm single_char, single_char_len, C_BG_RED + C_FG_BLACK, ecx, 0
+    ;     seg_print_text_pm single_char, single_char_len, C_BG_BLUE + C_FG_CYAN, ecx, 79
 
-        dec ecx
-        cmp ecx, BOARD_H / 2 - 3
-        jge .bar_loop
-
+    ;     dec ecx
+    ;     cmp ecx, BOARD_H / 2 - 3
+    ;     jge .bar_loop
+    ; Barras --------------------------------------
 
     seg_print_text_pm screen_cln_msg, screen_cln_len, C_BG_BLACK + C_FG_BLACK, SCREEN_H - 1, 0
 

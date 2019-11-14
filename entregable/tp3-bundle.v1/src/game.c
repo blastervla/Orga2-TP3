@@ -46,12 +46,12 @@ uint32_t player_x[2] = {
     79
 };
 uint32_t prev_player_y[2] = {
-    0,
-    0
+    BOARD_H / 2 - 3,
+    BOARD_H / 2 - 3
 };
 uint32_t player_y[2] = {
-    0,
-    0
+    BOARD_H / 2 - 3,
+    BOARD_H / 2 - 3
 };
 
 uint32_t prev_ball_x[6];
