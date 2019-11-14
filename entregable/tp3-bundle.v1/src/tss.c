@@ -52,7 +52,7 @@ tss tss_idle = (tss) {
     };
 
 tss tss_ball_tasks[12];
-uint32_t tss_ball_esp0s[12];
+uint32_t tss_ball_esp0s[6];
 uint32_t tss_ball_page_dirs[6];
 
 tss tss_new_ball (PLAYER player, uint8_t isHandler);
@@ -65,7 +65,7 @@ void tss_init() {
 
     tss_initial = (tss) { 0 };
 
-    for (int i = 0; i < 12; ++i) {
+    for (int i = 0; i < 6; ++i) {
     	// Sumamos PAGE_SIZE porque estamos definiendo stacks 
     	// (que van de abajo para arriba)
     	tss_ball_esp0s[i] = mmu_nextFreeKernelPage() + PAGE_SIZE;
@@ -93,7 +93,7 @@ tss tss_new_ball (PLAYER player, uint8_t isHandler) {
 	return (tss) {
 		(uint16_t)  0,	// ptl;
     	(uint16_t)  0,	// unused0;
-    	(uint32_t)  tss_ball_esp0s[player * 2 + (isHandler ? 1 : 0)],	//   esp0;
+    	(uint32_t)  tss_ball_esp0s[player] + PAGE_SIZE / 2 * (isHandler ? 2 : 1),	//   esp0;
     	(uint16_t)  GDT_DATA_0 << 3,	// ss0;
     	(uint16_t)  0,	// unused1;
     	(uint32_t)  0,	//   esp1;
@@ -109,7 +109,7 @@ tss tss_new_ball (PLAYER player, uint8_t isHandler) {
     	(uint32_t)  0,	//   ecx;
     	(uint32_t)  0,	//   edx;
     	(uint32_t)  0,	//   ebx;
-    	(uint32_t)  TASK_CODE_ADDR + 7 * 1024,	//   esp;
+    	(uint32_t)  TASK_CODE_ADDR + (isHandler ? 8 : 7) * 1024,	//   esp;
     	(uint32_t)  0,	//   ebp;
     	(uint32_t)  0,	//   esi;
     	(uint32_t)  0,	//   edi;
@@ -133,13 +133,13 @@ tss tss_new_ball (PLAYER player, uint8_t isHandler) {
 }
 
 void tss_ball_reset(PLAYER player) {
-	tss_ball_tasks[player * 2].esp0 = tss_ball_esp0s[player * 2];
+	tss_ball_tasks[player * 2].esp0 = tss_ball_esp0s[player] + PAGE_SIZE / 2;
 	tss_ball_tasks[player * 2].eip = TASK_CODE_ADDR;
 	tss_ball_tasks[player * 2].esp = TASK_CODE_ADDR + 7 * 1024;
 }
 
 void tss_ball_handler_reset(PLAYER player, f_handler_t* handler) {
-	tss_ball_tasks[player * 2 + 1].esp0 = tss_ball_esp0s[player * 2 + 1];
+	tss_ball_tasks[player * 2 + 1].esp0 = tss_ball_esp0s[player] + PAGE_SIZE;
 	tss_ball_tasks[player * 2 + 1].eip = (uint32_t) handler;
-	tss_ball_tasks[player * 2 + 1].esp = TASK_CODE_ADDR + 7 * 1024;
+	tss_ball_tasks[player * 2 + 1].esp = TASK_CODE_ADDR + 8 * 1024;
 }

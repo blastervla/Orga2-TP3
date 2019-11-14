@@ -61,7 +61,6 @@ extern tss tss_initial;
 extern tss tss_idle;
 
 extern tss tss_ball_tasks[12];
-extern uint32_t tss_ball_esp0s[12];
 
 void tss_init();
 
