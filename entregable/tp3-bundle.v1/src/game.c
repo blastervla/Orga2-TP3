@@ -266,6 +266,9 @@ void game_executeFrameCalculations() {
 }
 
 void game_executeFrame() {
+    // Cuando estamos mostrando el chart del modo debug, el juego se pausa!
+    if (debug_chart_shown) return;
+
     game_executeFrameCalculations();
 
     // Pintar pelotas
@@ -369,15 +372,15 @@ void game_showDebugInfo(uint32_t exception);
 
 void game_kbInput(uint32_t input) {
     if (input == SCAN_CODE_Y) {
-        // Descomentar esto para probar fácil: ---
-        game_showDebugInfo(99);              //
-        // ---------------------------------------
-        // Toggleamos el modo debug
         if (debug_mode_on && debug_chart_shown) {
             // Hay que restaurar la pantalla y seguir con el juego!
             restore_screen(&saved_screen);
             debug_chart_shown = 0;
         } else {
+            // Descomentar esto para probar fácil: ---
+            game_showDebugInfo(99);              //
+            // ---------------------------------------
+            // Toggleamos el modo debug
             debug_mode_on = debug_mode_on ? 0 : 1;
         }
         return;
@@ -396,6 +399,13 @@ void game_kbInput(uint32_t input) {
 char *get_exception_str(uint32_t exception);
 
 void game_showDebugInfo(uint32_t exception) {
+    if (!debug_mode_on) {
+        print_dec(exception, 2, BOARD_W / 2 - 14, 3, C_BG_DARK_GREY + C_FG_WHITE);
+        char *str = get_exception_str(exception);
+        print(str, BOARD_W / 2 - 11, 3, C_BG_DARK_GREY + C_FG_WHITE);
+        return;
+    }
+
     save_screen(&saved_screen);
 
     screen_drawBox(1, BOARD_W / 2 - 15, BOARD_H - 1, 30, '@', C_BG_BLACK + C_FG_LIGHT_GREY);
