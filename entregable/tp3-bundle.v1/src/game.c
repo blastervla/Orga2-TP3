@@ -6,6 +6,52 @@
 
 #include "game.h"
 
+uint8_t debug_mode_on = 0;
+uint8_t debug_chart_shown = 0;
+
+char *eax_str = "eax:";
+char *ebx_str = "ebx:";
+char *ecx_str = "ecx:";
+char *edx_str = "edx:";
+char *esi_str = "esi:";
+char *edi_str = "edi:";
+char *ebp_str = "ebp:";
+char *esp_str = "esp:";
+char *eip_str = "eip:";
+char *cs_str = "cs:";
+char *ds_str = "ds:";
+char *es_str = "es:";
+char *fs_str = "fs:";
+char *gs_str = "gs:";
+char *ss_str = "ss:";
+char *eflags_str = "eflags:";
+char *cr0_str = "cr0:";
+char *cr2_str = "cr2:";
+char *cr3_str = "cr3:";
+char *cr4_str = "cr4:";
+
+char *UNKNOWN_EXCEPTION = "Unknown";
+char *EXCEPTION_0 = "Divide by Zero";
+char *EXCEPTION_1 = "Debug";
+char *EXCEPTION_2 = "Non-maskable interrupt";
+char *EXCEPTION_3 = "Breakpoint";
+char *EXCEPTION_4 = "Overflow";
+char *EXCEPTION_5 = "Bound range exceeded";
+char *EXCEPTION_6 = "Invalid Opcode";
+char *EXCEPTION_7 = "Device not Available";
+char *EXCEPTION_8 = "Double Fault";
+char *EXCEPTION_10 = "Invalid TSS";
+char *EXCEPTION_11 = "Segment not Present";
+char *EXCEPTION_12 = "Stack-segment Fault";
+char *EXCEPTION_13 = "General Protection Fault";
+char *EXCEPTION_14 = "Page Fault";
+char *EXCEPTION_16 = "Floating Point Exc.";
+char *EXCEPTION_17 = "Alignment Check";
+char *EXCEPTION_18 = "Machine Check";
+char *EXCEPTION_30 = "Security Exception";
+
+ca saved_screen[SCREEN_H * SCREEN_W];
+
 uint32_t points_y = 41;
 
 uint32_t message_x[2] = {
@@ -319,7 +365,22 @@ void game_informAction(e_action_t action) {
 }
 
 
+void game_showDebugInfo(uint32_t exception);
+
 void game_kbInput(uint32_t input) {
+    if (input == SCAN_CODE_Y) {
+        game_showDebugInfo(99);
+        // Toggleamos el modo debug
+        if (debug_mode_on && debug_chart_shown) {
+            // Hay que restaurar la pantalla y seguir con el juego!
+            restore_screen(saved_screen);
+            debug_chart_shown = 0;
+        } else {
+            debug_mode_on = debug_mode_on ? 0 : 1;
+        }
+        return;
+    }
+
     // Vemos que tecla se està presionando
     for(int i = 0; i < 10; i++) {
         if(keys[i] == input) {
@@ -327,5 +388,144 @@ void game_kbInput(uint32_t input) {
         } else if (BREAK_CODE(keys[i]) == input) {
             keyPresses[i] = 0;
         }
+    }
+}
+
+char *get_exception_str(uint32_t exception);
+
+void game_showDebugInfo(uint32_t exception) {
+    save_screen(saved_screen);
+
+    screen_drawBox(1, BOARD_W / 2 - 15, BOARD_H - 1, 30, '@', C_BG_BLACK + C_FG_LIGHT_GREY);
+    screen_drawBox(2, BOARD_W / 2 - 14, BOARD_H - 3, 28, '@', C_BG_BLACK + C_FG_BLACK);
+    
+    screen_drawBox(3, BOARD_W / 2 - 14, 1, 28, '@', C_BG_DARK_GREY + C_FG_DARK_GREY);
+    screen_drawBox(5, BOARD_W / 2 - 14, BOARD_H - 6, 28, '@', C_BG_LIGHT_GREY + C_FG_LIGHT_GREY);
+
+    print_dec(exception, 2, BOARD_W / 2 - 14, 3, C_BG_DARK_GREY + C_FG_WHITE);
+    char *str = get_exception_str(exception);
+    print(str, BOARD_W / 2 - 11, 3, C_BG_DARK_GREY + C_FG_WHITE);
+
+    print(      eax_str,    BOARD_W / 2 - 13,   6,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  reax(), 8,  BOARD_W / 2 - 8,    6,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      ebx_str,    BOARD_W / 2 - 13,   8,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  rebx(), 8,  BOARD_W / 2 - 8,    8,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      ecx_str,    BOARD_W / 2 - 13,   10,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  recx(), 8,  BOARD_W / 2 - 8,    10,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      edx_str,    BOARD_W / 2 - 13,   12,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  redx(), 8,  BOARD_W / 2 - 8,    12,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      esi_str,    BOARD_W / 2 - 13,   14,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  resi(), 8,  BOARD_W / 2 - 8,    14,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      edi_str,    BOARD_W / 2 - 13,   16,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  redi(), 8,  BOARD_W / 2 - 8,    16,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      ebp_str,    BOARD_W / 2 - 13,   18,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  rebp(), 8,  BOARD_W / 2 - 8,    18,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      esp_str,    BOARD_W / 2 - 13,   20,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  resp(), 8,  BOARD_W / 2 - 8,    20,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    // print(      eip_str,    BOARD_W / 2 - 13,   22,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    // print_hex(  reip(), 8,  BOARD_W / 2 - 8,    22,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      cs_str,     BOARD_W / 2 - 13,   24,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  rcs(), 4,   BOARD_W / 2 - 8,    24,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      ds_str,     BOARD_W / 2 - 13,   26,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  rds(), 4,   BOARD_W / 2 - 8,    26,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      es_str,     BOARD_W / 2 - 13,   28,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  res(), 4,   BOARD_W / 2 - 8,    28,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      fs_str,     BOARD_W / 2 - 13,   30,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  rfs(), 4,   BOARD_W / 2 - 8,    30,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      gs_str,     BOARD_W / 2 - 13,   32,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  rgs(), 4,   BOARD_W / 2 - 8,    32,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      ss_str,     BOARD_W / 2 - 13,   34,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  rss(), 4,   BOARD_W / 2 - 8,    34,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      eflags_str,     BOARD_W / 2 - 13,   37,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  reflags(), 8,   BOARD_W / 2 - 5,    37,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      cr0_str,     BOARD_W / 2 + 1,   6,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  rcr0(), 8,   BOARD_W / 2 + 6,   6,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      cr2_str,     BOARD_W / 2 + 1,   8,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  rcr2(), 8,   BOARD_W / 2 + 6,   8,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      cr3_str,     BOARD_W / 2 + 1,   10,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  rcr3(), 8,   BOARD_W / 2 + 6,   10,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      cr4_str,     BOARD_W / 2 + 1,   12,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  rcr4(), 8,   BOARD_W / 2 + 6,   12,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    // eax_str
+    // ebx_str
+    // ecx_str
+    // edx_str
+    // esi_str
+    // edi_str
+    // ebp_str
+    // esp_str
+    // eip_str
+    // cs_str
+    // ds_str
+    // es_str
+    // fs_str
+    // gs_str
+    // ss_str
+    // eflags_str
+
+    debug_chart_shown = 1;
+}
+
+char *get_exception_str(uint32_t exception) {
+    switch (exception) {
+        case 0:
+            return EXCEPTION_0;
+        case 1:
+            return EXCEPTION_1;
+        case 2:
+            return EXCEPTION_2;
+        case 3:
+            return EXCEPTION_3;
+        case 4:
+            return EXCEPTION_4;
+        case 5:
+            return EXCEPTION_5;
+        case 6:
+            return EXCEPTION_6;
+        case 7:
+            return EXCEPTION_7;
+        case 8:
+            return EXCEPTION_8;
+        case 10:
+            return EXCEPTION_10;
+        case 11:
+            return EXCEPTION_11;
+        case 12:
+            return EXCEPTION_12;
+        case 13:
+            return EXCEPTION_13;
+        case 14:
+            return EXCEPTION_14;
+        case 16:
+            return EXCEPTION_16;
+        case 17:
+            return EXCEPTION_17;
+        case 18:
+            return EXCEPTION_18;
+        case 30:
+            return EXCEPTION_30;
+
+        default:
+            return UNKNOWN_EXCEPTION;
     }
 }

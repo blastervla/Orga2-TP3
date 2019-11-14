@@ -12,6 +12,24 @@
 
 #define LS_INLINE static __inline __attribute__((always_inline))
 
+LS_INLINE uint32_t reax(void);
+LS_INLINE uint32_t rebx(void);
+LS_INLINE uint32_t recx(void);
+LS_INLINE uint32_t redx(void);
+LS_INLINE uint32_t resi(void);
+LS_INLINE uint32_t redi(void);
+LS_INLINE uint32_t rebp(void);
+LS_INLINE uint32_t resp(void);
+LS_INLINE uint32_t reip(void);
+
+LS_INLINE uint32_t rcs(void);
+LS_INLINE uint32_t rds(void);
+LS_INLINE uint32_t res(void);
+LS_INLINE uint32_t rfs(void);
+LS_INLINE uint32_t rgs(void);
+LS_INLINE uint32_t rss(void);
+LS_INLINE uint32_t reflags(void);
+
 LS_INLINE void lcr0(uint32_t val);
 LS_INLINE uint32_t rcr0(void);
 LS_INLINE void lcr1(uint32_t val);
@@ -104,6 +122,88 @@ LS_INLINE void hlt(void) {
 
 LS_INLINE void breakpoint(void) {
     __asm __volatile("xchg %%bx, %%bx" : :);
+}
+
+LS_INLINE uint32_t reax(void) {
+    uint32_t val;
+    __asm __volatile("movl %%eax,%0" : "=r" (val));
+    return val;
+}
+LS_INLINE uint32_t rebx(void) {
+    uint32_t val;
+    __asm __volatile("movl %%ebx,%0" : "=r" (val));
+    return val;
+}
+LS_INLINE uint32_t recx(void) {
+    uint32_t val;
+    __asm __volatile("movl %%ecx,%0" : "=r" (val));
+    return val;
+}
+LS_INLINE uint32_t redx(void) {
+    uint32_t val;
+    __asm __volatile("movl %%edx,%0" : "=r" (val));
+    return val;
+}
+LS_INLINE uint32_t resi(void) {
+    uint32_t val;
+    __asm __volatile("movl %%esi,%0" : "=r" (val));
+    return val;
+}
+LS_INLINE uint32_t redi(void) {
+    uint32_t val;
+    __asm __volatile("movl %%edi,%0" : "=r" (val));
+    return val;
+}
+LS_INLINE uint32_t rebp(void) {
+    uint32_t val;
+    __asm __volatile("movl %%ebp,%0" : "=r" (val));
+    return val;
+}
+LS_INLINE uint32_t resp(void) {
+    uint32_t val;
+    __asm __volatile("movl %%esp,%0" : "=r" (val));
+    return val;
+}
+LS_INLINE uint32_t reip(void) {
+    uint32_t val;
+    __asm __volatile("movl %%eip,%0" : "=r" (val));
+    return val;
+}
+LS_INLINE uint32_t rcs(void) {
+    uint32_t val;
+    __asm __volatile("movl %%cs,%0" : "=r" (val));
+    return val;
+}
+LS_INLINE uint32_t rds(void) {
+    uint32_t val;
+    __asm __volatile("movl %%ds,%0" : "=r" (val));
+    return val;
+}
+LS_INLINE uint32_t res(void) {
+    uint32_t val;
+    __asm __volatile("movl %%es,%0" : "=r" (val));
+    return val;
+}
+LS_INLINE uint32_t rfs(void) {
+    uint32_t val;
+    __asm __volatile("movl %%fs,%0" : "=r" (val));
+    return val;
+}
+LS_INLINE uint32_t rgs(void) {
+    uint32_t val;
+    __asm __volatile("movl %%gs,%0" : "=r" (val));
+    return val;
+}
+LS_INLINE uint32_t rss(void) {
+    uint32_t val;
+    __asm __volatile("movl %%ss,%0" : "=r" (val));
+    return val;
+}
+LS_INLINE uint32_t reflags(void) {
+    uint32_t val;
+    __asm __volatile("pushf" : : );
+    __asm __volatile("pop %0" : "=r" (val));
+    return val;
 }
 
 #endif  /* !__i386_H__ */

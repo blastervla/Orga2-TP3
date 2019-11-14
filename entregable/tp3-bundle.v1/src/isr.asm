@@ -34,6 +34,7 @@ extern game_getCurrentX
 extern game_getCurrentY
 extern game_informAction
 extern game_kbInput
+extern game_showDebugInfo
 
 extern print_dec
 
@@ -56,12 +57,13 @@ _isr%1:
     ; uint32_t x, 
     ; uint32_t y, 
     ; uint16_t attr
-    push C_BG_WHITE + C_FG_BLACK
-    push 25
-    push 40
-    push  2
+    ; push C_BG_WHITE + C_FG_BLACK
+    ; push 25
+    ; push 40
+    ; push  2
     push %1
-    call print_dec
+    ; call print_dec
+    call game_showDebugInfo
 
     mov eax, %1
     jmp $

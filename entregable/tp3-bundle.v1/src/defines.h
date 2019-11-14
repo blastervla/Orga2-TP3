@@ -152,6 +152,7 @@
 /* -------------------------------------------------------------------------- */
 // http://quadibloc.com/comp/scan.htm
 
+#define SCAN_CODE_Y 0x15
 #define SCAN_CODE_W 0x11 
 #define SCAN_CODE_S 0x1F
 #define SCAN_CODE_Z 0x2C
