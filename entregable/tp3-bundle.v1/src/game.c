@@ -189,6 +189,14 @@ void game_executeBallCalculations() {
         } else {
             ball_x[i] = x;
             ball_y[i] = y;
+
+            // Manejar rebotes
+            if (x == BOARD_W || x == 0) {
+                ball_current_directions_x[i] *= -1;
+            }
+            if (y == 0 || y == BOARD_H) {
+                ball_current_directions_y[i] *= -1;
+            }
         }
     }
 }
