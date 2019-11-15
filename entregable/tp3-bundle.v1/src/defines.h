@@ -111,7 +111,7 @@
 
 /* TSS */
 /* -------------------------------------------------------------------------- */
-#define TSS_SIZE			512
+#define TSS_SIZE			0x068
 #define TSS_EFLAGS_INT		0x202
 
 /* Selectores de segmentos */
@@ -124,7 +124,7 @@
 #define VIDEO                    0x000B8000 /* direccion fisica del buffer de video */
 
 /* Direcciones virtuales de código, pila y datos */
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------1------------------------------------- */
 #define TASK_CODE_ADDR			0x08000000 /* direccion virtual del codigo */
 #define TEMP_VIRTUAL_ADDR 		0x08004000
 
@@ -139,7 +139,7 @@
 /* -------------------------------------------------------------------------- */
 #define KERNEL_PAGE_DIR          0x0002B000
 #define KERNEL_PAGE_TABLE_0      0x0002C000
-#define KERNEL_STACK_END         KERNEL_PAGE_DIR - 1
+#define KERNEL_STACK_END         KERNEL_PAGE_DIR
 
 /* MMU */
 #define KERNEL_FREE_PAGE_START   0x00100000

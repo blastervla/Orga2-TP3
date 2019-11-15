@@ -10,8 +10,8 @@
 
 BITS 32
 
-sched_task_offset:     dd 0xFFFF
-sched_task_selector:   dw 0xFFFFFFFF
+sched_task_offset:     dd 0
+sched_task_selector:   dw 0
 
 current_clock: db 0
 
@@ -98,6 +98,8 @@ ISR 30
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
 _isr32:
+    pushad
+    call pic_finish1
     ; Llamar a sched_nextTask y efectivamente cargar la tarea!
     mov cl, [current_clock]
     cmp cl, 6
@@ -135,12 +137,13 @@ _isr32:
 .end:
 
     call nextClock
-    call pic_finish1
+    popad
     iret
 
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
 _isr33:
+    pushad
     ; Item 3. d -------------------------------------------------------------
     ; in al, 0x60
     ; 02 (1), 03 (2), 04 (3), 05 (4), 06 (5), 07 (6), 08 (7), 09 (8), 0a (9), 0b (0)
@@ -169,11 +172,13 @@ _isr33:
     add esp, 4          ; Limpiamos
 
     call pic_finish1
+    popad
     iret
 
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
 _isr47:
+    pushad
     cmp eax, SYSCALL_INFORM_ACTION
     je .talk
     cmp eax, SYSCALL_SET_HANDLER
@@ -240,6 +245,7 @@ _isr47:
     jmp far [sched_task_offset]
 
 .end:
+    popad
     iret
 
 ;; Funciones Auxiliares
