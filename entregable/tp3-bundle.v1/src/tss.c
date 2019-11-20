@@ -110,7 +110,7 @@ void tss_new_ball (PLAYER player, uint8_t isHandler) {
     	(uint32_t)  0,	//   edx;
     	(uint32_t)  0,	//   ebx;
     	(uint32_t)  TASK_CODE_ADDR + (isHandler ? 8 : 7) * 1024,	//   esp;
-    	(uint32_t)  TASK_CODE_ADDR + (isHandler ? 8 : 7) * 1024,	//   ebp;
+    	(uint32_t)  0,  //   ebp;
     	(uint32_t)  0,	//   esi;
     	(uint32_t)  0,	//   edi;
     	(uint16_t)  (GDT_DATA_3 << 3) + 3,	// es;
