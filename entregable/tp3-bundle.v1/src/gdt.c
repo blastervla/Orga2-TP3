@@ -135,7 +135,7 @@ void gdt_init() {
         (uint8_t)     0x00,           /* limit[16:19] */
         (uint8_t)     0x00,           /* avl          */
         (uint8_t)     0x00,           /* l            */
-        (uint8_t)     0x00,           /* db           */
+        (uint8_t)     0x01,           /* db           */
         (uint8_t)     0x00,           /* g            */
         (uint8_t)     (ADDR(tss_initial) >> 24),           /* base[31:24]  */
     };
@@ -152,7 +152,7 @@ void gdt_init() {
         (uint8_t)     0x00,           /* limit[16:19] */
         (uint8_t)     0x00,           /* avl          */
         (uint8_t)     0x00,           /* l            */
-        (uint8_t)     0x00,           /* db           */
+        (uint8_t)     0x01,           /* db           */
         (uint8_t)     0x00,           /* g            */
         (uint8_t)     (ADDR(tss_idle) >> 24),           /* base[31:24]  */
     };
@@ -168,7 +168,7 @@ void gdt_init() {
         (uint8_t)     0x00,           /* limit[16:19] */
         (uint8_t)     0x00,           /* avl          */
         (uint8_t)     0x00,           /* l            */
-        (uint8_t)     0x00,           /* db           */
+        (uint8_t)     0x01,           /* db           */
         (uint8_t)     0x00,           /* g            */
         (uint8_t)     (ADDR(tss_ball_tasks[0]) >> 24),           /* base[31:24]  */
     };
@@ -184,7 +184,7 @@ void gdt_init() {
         (uint8_t)     0x00,           /* limit[16:19] */
         (uint8_t)     0x00,           /* avl          */
         (uint8_t)     0x00,           /* l            */
-        (uint8_t)     0x00,           /* db           */
+        (uint8_t)     0x01,           /* db           */
         (uint8_t)     0x00,           /* g            */
         (uint8_t)     (ADDR(tss_ball_tasks[1]) >> 24),           /* base[31:24]  */
     };
@@ -200,7 +200,7 @@ void gdt_init() {
         (uint8_t)     0x00,           /* limit[16:19] */
         (uint8_t)     0x00,           /* avl          */
         (uint8_t)     0x00,           /* l            */
-        (uint8_t)     0x00,           /* db           */
+        (uint8_t)     0x01,           /* db           */
         (uint8_t)     0x00,           /* g            */
         (uint8_t)     (ADDR(tss_ball_tasks[2]) >> 24),           /* base[31:24]  */
     };
@@ -216,7 +216,7 @@ void gdt_init() {
         (uint8_t)     0x00,           /* limit[16:19] */
         (uint8_t)     0x00,           /* avl          */
         (uint8_t)     0x00,           /* l            */
-        (uint8_t)     0x00,           /* db           */
+        (uint8_t)     0x01,           /* db           */
         (uint8_t)     0x00,           /* g            */
         (uint8_t)     (ADDR(tss_ball_tasks[3]) >> 24),           /* base[31:24]  */
     };
@@ -232,7 +232,7 @@ void gdt_init() {
         (uint8_t)     0x00,           /* limit[16:19] */
         (uint8_t)     0x00,           /* avl          */
         (uint8_t)     0x00,           /* l            */
-        (uint8_t)     0x00,           /* db           */
+        (uint8_t)     0x01,           /* db           */
         (uint8_t)     0x00,           /* g            */
         (uint8_t)     (ADDR(tss_ball_tasks[4]) >> 24),           /* base[31:24]  */
     };
@@ -248,7 +248,7 @@ void gdt_init() {
         (uint8_t)     0x00,           /* limit[16:19] */
         (uint8_t)     0x00,           /* avl          */
         (uint8_t)     0x00,           /* l            */
-        (uint8_t)     0x00,           /* db           */
+        (uint8_t)     0x01,           /* db           */
         (uint8_t)     0x00,           /* g            */
         (uint8_t)     (ADDR(tss_ball_tasks[5]) >> 24),           /* base[31:24]  */
     };
@@ -264,7 +264,7 @@ void gdt_init() {
         (uint8_t)     0x00,           /* limit[16:19] */
         (uint8_t)     0x00,           /* avl          */
         (uint8_t)     0x00,           /* l            */
-        (uint8_t)     0x00,           /* db           */
+        (uint8_t)     0x01,           /* db           */
         (uint8_t)     0x00,           /* g            */
         (uint8_t)     (ADDR(tss_ball_tasks[6]) >> 24),           /* base[31:24]  */
     };
@@ -280,7 +280,7 @@ void gdt_init() {
         (uint8_t)     0x00,           /* limit[16:19] */
         (uint8_t)     0x00,           /* avl          */
         (uint8_t)     0x00,           /* l            */
-        (uint8_t)     0x00,           /* db           */
+        (uint8_t)     0x01,           /* db           */
         (uint8_t)     0x00,           /* g            */
         (uint8_t)     (ADDR(tss_ball_tasks[7]) >> 24),           /* base[31:24]  */
     };
@@ -296,7 +296,7 @@ void gdt_init() {
         (uint8_t)     0x00,           /* limit[16:19] */
         (uint8_t)     0x00,           /* avl          */
         (uint8_t)     0x00,           /* l            */
-        (uint8_t)     0x00,           /* db           */
+        (uint8_t)     0x01,           /* db           */
         (uint8_t)     0x00,           /* g            */
         (uint8_t)     (ADDR(tss_ball_tasks[8]) >> 24),           /* base[31:24]  */
     };
@@ -312,7 +312,7 @@ void gdt_init() {
         (uint8_t)     0x00,           /* limit[16:19] */
         (uint8_t)     0x00,           /* avl          */
         (uint8_t)     0x00,           /* l            */
-        (uint8_t)     0x00,           /* db           */
+        (uint8_t)     0x01,           /* db           */
         (uint8_t)     0x00,           /* g            */
         (uint8_t)     (ADDR(tss_ball_tasks[9]) >> 24),           /* base[31:24]  */
     };
@@ -328,7 +328,7 @@ void gdt_init() {
         (uint8_t)     0x00,           /* limit[16:19] */
         (uint8_t)     0x00,           /* avl          */
         (uint8_t)     0x00,           /* l            */
-        (uint8_t)     0x00,           /* db           */
+        (uint8_t)     0x01,           /* db           */
         (uint8_t)     0x00,           /* g            */
         (uint8_t)     (ADDR(tss_ball_tasks[10]) >> 24),           /* base[31:24]  */
     };
@@ -344,7 +344,7 @@ void gdt_init() {
         (uint8_t)     0x00,           /* limit[16:19] */
         (uint8_t)     0x00,           /* avl          */
         (uint8_t)     0x00,           /* l            */
-        (uint8_t)     0x00,           /* db           */
+        (uint8_t)     0x01,           /* db           */
         (uint8_t)     0x00,           /* g            */
         (uint8_t)     (ADDR(tss_ball_tasks[11]) >> 24),           /* base[31:24]  */
     };
