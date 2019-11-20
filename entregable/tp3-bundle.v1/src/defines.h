@@ -47,6 +47,7 @@
 #define PAGE_IGN 			0
 #define PAGE_PS_4K			0
 #define PAGE_GLOBAL 		0
+#define PAGE_NOT_GLOBAL     0
 #define PAGE_AVL 			0
 
 #define PAGE_NOT_DIRTY		0

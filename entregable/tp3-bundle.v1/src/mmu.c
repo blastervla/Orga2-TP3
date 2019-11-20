@@ -59,7 +59,7 @@ void mmu_mapPage(uint32_t virtual, uint32_t cr3, uint32_t phy, PRIVILEDGE_LEVEL 
 	pte* tbl = (pte*) (dirEntry->table << 12);
 
 	// Configuramos el índice de la tabla
-	tbl[addr.pteIndex].present = PAGE_PRESENT; 
+	tbl[addr.pteIndex].present = PAGE_PRESENT;
 	tbl[addr.pteIndex].base = (phy >> 12);
 
 	tlbflush();
@@ -77,7 +77,7 @@ pte* mmu_createTable(PRIVILEDGE_LEVEL privLvl) {
 		tbl[i].acc = PAGE_NOT_ACCESSED;
 		tbl[i].drt = PAGE_NOT_DIRTY;
 		tbl[i].pat = PAGE_PAT;
-		tbl[i].g = PAGE_GLOBAL;
+		tbl[i].g = PAGE_NOT_GLOBAL;
 		tbl[i].avl = PAGE_AVL;
 	}
 
