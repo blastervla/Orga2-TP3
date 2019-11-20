@@ -141,6 +141,8 @@ _isr32:
 ;; -------------------------------------------------------------------------- ;;
 _isr33:
     pushad
+    call pic_finish1
+
     ; Item 3. d -------------------------------------------------------------
     ; in al, 0x60
     ; 02 (1), 03 (2), 04 (3), 05 (4), 06 (5), 07 (6), 08 (7), 09 (8), 0a (9), 0b (0)
@@ -160,15 +162,12 @@ _isr33:
 ;.noPrint:
     ; Item 3. d -------------------------------------------------------------
 
-    ; TODO: Tomar el input del user y realizar una acción en base a eso
-    ; Nota: Claramente vamos a tomar el input y saltar a game con eso como param
     xor eax, eax
     in al, 0x60
     push eax
     call game_kbInput
     add esp, 4          ; Limpiamos
 
-    call pic_finish1
     popad
     iret
 
@@ -176,6 +175,7 @@ _isr33:
 ;; -------------------------------------------------------------------------- ;;
 _isr47:
     pushad
+
     cmp eax, SYSCALL_INFORM_ACTION
     je .talk
     cmp eax, SYSCALL_SET_HANDLER
@@ -185,19 +185,22 @@ _isr47:
     cmp eax, SYSCALL_TALK
     jne .end
 
-.talk:          ; Envía al sistema el mensaje almacenado en EBX, máximo 20 chars
+.talk:
+    ; Envía al sistema el mensaje almacenado en EBX, máximo 20 chars
+
     push ebx
     call game_talk
     add esp, 4  ; Limpiamos el parámetro que pasamos antes
 
-    ; TODO: Arreglar size de la TSS!!!!!!!
     jmp .end
 
-.where:    ; Retorna los valores x e y correspondientes a la posición 
-                ; actual de la pelota en EBX y ECX (respectivamente). X va
-                ; entre 1 y 78 (siendo 1 el extremo donde originalmente se
-                ; lanzó la pelota). Y va de 1 a 40, 1 siendo la primera 
-                ; fila y 40 la última.
+.where:
+    ; Retorna los valores x e y correspondientes a la posición 
+
+    ; actual de la pelota en EBX y ECX (respectivamente). X va
+    ; entre 1 y 78 (siendo 1 el extremo donde originalmente se
+    ; lanzó la pelota). Y va de 1 a 40, 1 siendo la primera 
+    ; fila y 40 la última.
     
     ; Le preguntamos a game cuál es la posición actual de la pelota en
     ; cuestión.
@@ -209,8 +212,11 @@ _isr47:
 
     jmp .end
 
-.setHandler:    ; Registra en el sistema la dirección de memoria del handler
-                ; para la tarea actualmente en ejecución.
+.setHandler:
+    ; Registra en el sistema la dirección de memoria del handler
+    ; para la tarea actualmente en ejecución.
+    ;
+    ; ebx = f_handler_t* f
 
     push ebx
     call sched_registerHandler
@@ -218,16 +224,20 @@ _isr47:
 
     jmp .end
 
-.informAction:  ; Este servicio se utiliza para retornar al sistema luego
-                ; de la ejecución de un handler. 
+.informAction:
+    ; Este servicio se utiliza para retornar al sistema luego
+    ; de la ejecución de un handler.
+    ; ebx = e_action action
+
     ; 1. Obtenemos iTareaActual de sched.
     ; 2. Reportamos a game la acción que realizó la pelota actual.
     ; 3. Somos losotro´
 
+    ; El servicio debe ser llamado desde un handler
     call sched_killIfNotHandler
 
     push ebx
-    call game_informAction
+    call game_informAction ; game_informAction(action)
     add esp, 4  ; Limpiamos el parámetro que pasamos antes
 
     call sched_nextTask     ; Pedimos el selector tss de la siguiente tarea
@@ -236,6 +246,7 @@ _isr47:
     cmp bx, ax
     je .end     ; Si son la misma tarea, no la cambiamos!!!
 
+    ; Salto a la tarea
     mov [sched_task_selector], ax
     jmp far [sched_task_offset]
 
