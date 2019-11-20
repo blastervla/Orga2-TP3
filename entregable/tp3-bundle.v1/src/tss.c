@@ -55,7 +55,7 @@ tss tss_ball_tasks[12];
 uint32_t tss_ball_esp0s[6];
 uint32_t tss_ball_page_dirs[6];
 
-tss tss_new_ball (PLAYER player, uint8_t isHandler);
+void tss_new_ball (PLAYER player, uint8_t isHandler);
 
 void tss_init() {
 
@@ -75,22 +75,22 @@ void tss_init() {
 		tss_ball_page_dirs[i] = mmu_initTaskDir(i);
 	}
 
-	tss_ball_tasks[0] = tss_new_ball(PLAYER_A_TIPO_1, 0);
-	tss_ball_tasks[1] = tss_new_ball(PLAYER_A_TIPO_1, 1);
-	tss_ball_tasks[2] = tss_new_ball(PLAYER_A_TIPO_2, 0);
-	tss_ball_tasks[3] = tss_new_ball(PLAYER_A_TIPO_2, 1);
-	tss_ball_tasks[4] = tss_new_ball(PLAYER_A_TIPO_3, 0);
-	tss_ball_tasks[5] = tss_new_ball(PLAYER_A_TIPO_3, 1);
-	tss_ball_tasks[6] = tss_new_ball(PLAYER_B_TIPO_1, 0);
-	tss_ball_tasks[7] = tss_new_ball(PLAYER_B_TIPO_1, 1);
-	tss_ball_tasks[8] = tss_new_ball(PLAYER_B_TIPO_2, 0);
-	tss_ball_tasks[9] = tss_new_ball(PLAYER_B_TIPO_2, 1);
-	tss_ball_tasks[10] = tss_new_ball(PLAYER_B_TIPO_3, 0);
-	tss_ball_tasks[11] = tss_new_ball(PLAYER_B_TIPO_3, 1);
+	tss_new_ball(PLAYER_A_TIPO_1, 0);
+	tss_new_ball(PLAYER_A_TIPO_1, 1);
+	tss_new_ball(PLAYER_A_TIPO_2, 0);
+	tss_new_ball(PLAYER_A_TIPO_2, 1);
+	tss_new_ball(PLAYER_A_TIPO_3, 0);
+	tss_new_ball(PLAYER_A_TIPO_3, 1);
+	tss_new_ball(PLAYER_B_TIPO_1, 0);
+	tss_new_ball(PLAYER_B_TIPO_1, 1);
+	tss_new_ball(PLAYER_B_TIPO_2, 0);
+	tss_new_ball(PLAYER_B_TIPO_2, 1);
+	tss_new_ball(PLAYER_B_TIPO_3, 0);
+	tss_new_ball(PLAYER_B_TIPO_3, 1);
 }
 
-tss tss_new_ball (PLAYER player, uint8_t isHandler) {
-	return (tss) {
+void tss_new_ball (PLAYER player, uint8_t isHandler) {
+	tss_ball_tasks[player * 2 + isHandler] = (tss) {
 		(uint16_t)  0,	// ptl;
     	(uint16_t)  0,	// unused0;
     	(uint32_t)  tss_ball_esp0s[player] + PAGE_SIZE / (isHandler ? 1 : 2),	//   esp0;
@@ -110,7 +110,7 @@ tss tss_new_ball (PLAYER player, uint8_t isHandler) {
     	(uint32_t)  0,	//   edx;
     	(uint32_t)  0,	//   ebx;
     	(uint32_t)  TASK_CODE_ADDR + (isHandler ? 8 : 7) * 1024,	//   esp;
-    	(uint32_t)  0,	//   ebp;
+    	(uint32_t)  TASK_CODE_ADDR + (isHandler ? 8 : 7) * 1024,	//   ebp;
     	(uint32_t)  0,	//   esi;
     	(uint32_t)  0,	//   edi;
     	(uint16_t)  (GDT_DATA_3 << 3) + 3,	// es;
