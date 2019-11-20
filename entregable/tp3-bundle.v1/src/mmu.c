@@ -55,6 +55,8 @@ void mmu_mapPage(uint32_t virtual, uint32_t cr3, uint32_t phy, PRIVILEDGE_LEVEL 
 		// Si la tabla no está presente, hay que agregarla
 		dirEntry->table = ((uint32_t) mmu_createTable(privLvl) >> 12);
 		dirEntry->present = PAGE_PRESENT;
+		dirEntry->us = privLvl;
+		dirEntry->rw = PAGE_RW;																	
 	}
 	pte* tbl = (pte*) (dirEntry->table << 12);
 
