@@ -84,35 +84,35 @@ start:
     or eax, 1
     mov cr0, eax
 
-    jmp (GDT_CODE_0):modo_protegido
+    jmp (GDT_IDX_CODE_0 << 3):modo_protegido
 modo_protegido:
 BITS 32
 
     ; Establecer selectores de segmentos
 
-    mov eax, GDT_DATA_0
-    mov ss, eax
+    mov ax, GDT_IDX_DATA_0 << 3
+    mov ss, ax
 
-    mov ds, eax
-    mov gs, eax
-    mov fs, eax
+    mov ds, ax
+    mov gs, ax
+    mov fs, ax
 
     ; Establecer la base de la pila
     
-    mov esp, 0x2B000
+    mov esp, KERNEL_STACK_BASE
 
     ; Imprimir mensaje de bienvenida
     print_text_pm start_pm_msg, start_pm_len, 0x07, SCREEN_W / 2 - start_rm_len / 2, SCREEN_H / 2
 
     ; Inicializar pantalla
     ; Screen Size : 80 x 50 
-    mov eax, GDT_VIDEO
+    mov ax, GDT_IDX_VIDEO << 3
     mov fs, eax ; Usamos el selector de video
 
     call limpiar_pantalla
     call draw_screen
 
-    mov eax, GDT_DATA_0
+    mov eax, GDT_IDX_DATA_0 << 3
     mov fs, eax
 
     ; Inicializar el manejador de memoria
