@@ -8,6 +8,8 @@
 %include "colors.mac"
 %include "defines.mac"
 
+%define PROCESSING_TICK 6
+
 BITS 32
 
 sched_task_offset:     dd 0
@@ -102,29 +104,25 @@ _isr32:
     call pic_finish1
     ; Llamar a sched_nextTask y efectivamente cargar la tarea!
     mov cl, [current_clock]
-    cmp cl, 6
+    cmp cl, PROCESSING_TICK
     je .calculateAndIdle
 
-    inc cl
-    mov [current_clock], cl ; Incrementamos contador de tarea!
+    inc byte [current_clock] ; Incrementamos contador de tarea!
 
     ; Si la tarea actual es un handler, es porque nunca llamò a inform action,
     ; entonces hay que matarla.
     call sched_killIfHandler
 
-    call sched_nextTask     ; Pedimos el selector tss de la siguiente tarea
+    ; Pedimos el selector tss de la siguiente tarea
+    call sched_nextTask
 
     str bx
     cmp bx, ax
     je .end     ; Si son la misma tarea, no la cambiamos!!!
 
+    ; Salto a la tarea
     mov [sched_task_selector], ax
-    xchg bx, bx
-
-.cargarTarea:
     jmp far [sched_task_offset]
-    xchg bx, bx
-
     jmp .end
 
 .calculateAndIdle:
@@ -135,7 +133,6 @@ _isr32:
     call saltarAIdle
 
 .end:
-
     call nextClock
     popad
     iret
@@ -240,8 +237,6 @@ _isr47:
     je .end     ; Si son la misma tarea, no la cambiamos!!!
 
     mov [sched_task_selector], ax
-
-.cargarTarea:
     jmp far [sched_task_offset]
 
 .end:

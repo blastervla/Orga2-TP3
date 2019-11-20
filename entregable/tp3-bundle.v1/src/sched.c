@@ -40,10 +40,7 @@ int sched_isHandler() {
 }
 
 void task_inc() {
-	iTareaActual++;
-	if (iTareaActual == 12) {
-		iTareaActual = 0;
-	}
+	iTareaActual = (iTareaActual + 1) % 12;
 }
 
 void sched_init() {
@@ -54,19 +51,23 @@ void sched_init() {
 
 int16_t sched_nextTask() {
 	task_inc();
-	// Si debería ejecutar un handler y no lo tengo declarado, voy a la task directo:
-	if (sched_isHandler() && tareas[iTareaActual] == 0) {
-		iTareaActual++;
-	} else if (sched_isHandler()) {
-		// Resetteo el handler antes de ejecutarlo!
-		PLAYER p = sched_getTareaActual();
-		tss_ball_handler_reset(p, handlers[p]);
+
+	// Si debería ejecutar un handler y no lo tengo declarado, voy a la task directo
+	if (sched_isHandler()) {
+		if (tareas[iTareaActual] == 0){
+			task_inc();
+		} else {
+			// Resetteo el handler antes de ejecutarlo!
+			PLAYER p = sched_getTareaActual();
+			tss_ball_handler_reset(p, handlers[p]);
+		}
 	}
 
 	// Si no hay tarea definida, simplemente ejecuto la idle
-	if (tareas[iTareaActual] == 0) {
+	if (tareas[iTareaActual] == NULL) {
 		return GDT_IDX_TSS_IDLE << 3;
 	}
+
   	return tareas[iTareaActual];
 }
 
