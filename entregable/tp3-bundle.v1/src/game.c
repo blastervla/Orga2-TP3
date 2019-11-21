@@ -406,7 +406,6 @@ void game_showDebugInfo(uint32_t exception, uint32_t error_code) {
         char *str = get_exception_str(exception);
         print(str, BOARD_W / 2 - 11, 3, C_BG_DARK_GREY + C_FG_WHITE);
         print_dec(error_code, 3, BOARD_W / 2 - 20, 3, C_BG_DARK_GREY + C_FG_WHITE);
-        breakpoint();
         return;
     }
 
