@@ -145,13 +145,13 @@ void printPlayer(uint32_t x, uint32_t y, uint16_t color) {
 uint8_t hitPlayerAGoal(uint32_t x, uint32_t y) {
     // Devuelve true si está en la posición del goal de A y el jugador
     // A no está en la posición de impacto de la pelota!
-    return x <= PLAYER_A_GOAL && (y < player_y[0] || y > player_y[0] + 6);
+    return x == PLAYER_A_GOAL && (y < player_y[0] || y > player_y[0] + PLAYER_SIZE);
 }
 
 uint8_t hitPlayerBGoal(uint32_t x, uint32_t y) {
     // Devuelve true si está en la posición del goal de A y el jugador
     // A no está en la posición de impacto de la pelota!
-    return x >= PLAYER_B_GOAL && (y < player_y[1] || y > player_y[1] + 6);
+    return x >= PLAYER_B_GOAL && (y < player_y[1] || y > player_y[1] + PLAYER_SIZE);
 }
 
 void game_movePlayerUp(uint8_t player) {
@@ -171,7 +171,7 @@ void game_movePlayerDown(uint8_t player) {
 void game_setDefaultBallDirections(PLAYER ballIndex) {
     ball_current_actions[ballIndex] = Center;
     // El jugador A tiene direccion positiva por defecto, el B al reves
-    ball_current_directions_x[ballIndex] = ballIndex / 3 == 0 ? 1 : -1;
+    ball_current_directions_x[ballIndex] = (ballIndex / 3) == 0 ? 1 : -1;
     ball_current_directions_y[ballIndex] = 1;
 }
 
@@ -203,6 +203,10 @@ void game_executeBallCalculations() {
     for (int i = 0; i < 6; i++) {
         uint32_t x = prev_ball_x[i];
         uint32_t y = prev_ball_y[i];
+
+        if (x > BOARD_W || y > BOARD_H) {
+            continue;
+        }
 
         e_action_t direction = ball_current_actions[i];
         switch (direction) {
@@ -285,7 +289,7 @@ void game_executeFrame() {
         // Imprimir nuevas
         x = ball_x[i];
         y = ball_y[i];
-        color = ball_color[i];
+        color = ball_color[i / 3];
         printIfValid(ballChar, x, y, color);
         
         // Actualizar pelotas previas
