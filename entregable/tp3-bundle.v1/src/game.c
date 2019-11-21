@@ -372,8 +372,6 @@ void game_informAction(e_action_t action) {
 }
 
 
-void game_showDebugInfo(uint32_t exception);
-
 void game_kbInput(uint32_t input) {
     if (input == SCAN_CODE_Y) {
         if (debug_mode_on && debug_chart_shown) {
@@ -382,7 +380,7 @@ void game_kbInput(uint32_t input) {
             debug_chart_shown = 0;
         } else {
             // Descomentar esto para probar fácil: ---
-            game_showDebugInfo(99);              //
+            game_showDebugInfo(99, 0);              //
             // ---------------------------------------
             // Toggleamos el modo debug
             debug_mode_on = debug_mode_on ? 0 : 1;
@@ -402,11 +400,13 @@ void game_kbInput(uint32_t input) {
 
 char *get_exception_str(uint32_t exception);
 
-void game_showDebugInfo(uint32_t exception) {
+void game_showDebugInfo(uint32_t exception, uint32_t error_code) {
     if (!debug_mode_on) {
         print_dec(exception, 2, BOARD_W / 2 - 14, 3, C_BG_DARK_GREY + C_FG_WHITE);
         char *str = get_exception_str(exception);
         print(str, BOARD_W / 2 - 11, 3, C_BG_DARK_GREY + C_FG_WHITE);
+        print_dec(error_code, 3, BOARD_W / 2 - 20, 3, C_BG_DARK_GREY + C_FG_WHITE);
+        breakpoint();
         return;
     }
 

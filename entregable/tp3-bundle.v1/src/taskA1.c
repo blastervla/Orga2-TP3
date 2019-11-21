@@ -9,7 +9,6 @@
 void handler(void);
 
 void task() {
-	breakpoint();
     char* message = "Tarea A1";
     syscall_talk(message);
     syscall_setHandler(handler);
@@ -19,4 +18,5 @@ void task() {
 
 void handler() {
     syscall_informAction(Center);
+    breakpoint();
 }

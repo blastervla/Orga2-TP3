@@ -63,6 +63,9 @@ _isr%1:
     ; push 25
     ; push 40
     ; push  2
+
+    ; Luego del cambio de privilegio, tenemos el error code al tope de la pila
+    ; si lo hubo, y sino el EIP. No pusheamos nada porque ya està en la pila
     push %1
     ; call print_dec
     call game_showDebugInfo
