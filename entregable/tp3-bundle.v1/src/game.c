@@ -142,6 +142,12 @@ void printPlayer(uint32_t x, uint32_t y, uint16_t color) {
 }
 /* ---------------------------- UI UTILS ---------------------------- */
 
+void game_printWinMsg() {
+    //               Fila desde   ,  Columna desde  , fsize, csize
+    screen_drawBox(BOARD_H / 2 - 1, BOARD_W / 2 - 15,   3  ,  30,  '@', C_BG_BLACK + C_FG_LIGHT_GREY);
+    print(player_points[0] == 10 ? "Player A won" : "Player B won", BOARD_W / 2 - 6, BOARD_H / 2, C_BG_LIGHT_GREY + C_FG_WHITE);
+}
+
 uint8_t hitPlayerAGoal(uint32_t x, uint32_t y) {
     // Devuelve true si está en la posición del goal de A y el jugador
     // A no está en la posición de impacto de la pelota!
@@ -349,16 +355,6 @@ void game_executeFrame() {
             printIfValid(missingBallChar, x, y, color);
         }
     }
-}
-
-void game_printWinMsg() {
-    int32_t fInit, uint32_t cInit,
-                    uint32_t fSize, uint32_t cSize,
-                    uint8_t character, uint8_t attr
-
-    //               Fila desde   ,  Columna desde  , fsize, csize
-    screen_drawBox(BOARD_H / 2 - 1, BOARD_W / 2 - 15,   3  ,  30,  '@', C_BG_BLACK + C_FG_LIGHT_GREY);
-    print(player_points[0] == 10 ? "Player A won" : "Player B won", x, y, C_BG_LIGHT_GREY + C_FG_WHITE);
 }
 
 void game_talk(const char *msg) {
