@@ -123,3 +123,8 @@ void sched_makeItLookLikeAnAccident() {
 
 	saltarAIdle();
 }
+
+void sched_killBall(int iBall) {
+	tareas[iBall * 2] = NULL;
+	tareas[iBall * 2 + 1] = NULL
+}

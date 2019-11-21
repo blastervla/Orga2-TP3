@@ -34,4 +34,6 @@ void sched_killIfHandler();
 // Pre: La tarea actual es una pelota.
 void sched_makeItLookLikeAnAccident();
 
+void sched_killBall(int iBall);
+
 #endif	/* !__SCHED_H__ */

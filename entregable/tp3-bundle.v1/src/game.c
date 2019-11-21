@@ -227,14 +227,14 @@ void game_executeBallCalculations() {
 
         if (hitPlayerAGoal(x, y)) {
             // Matar la tarea de la pelota!
-            sched_makeItLookLikeAnAccident();
+            sched_killBall(i);
             player_points[PLAYER_B]++;
 
             ball_x[i] = 1000;
             ball_y[i] = 1000; // Posiciones invalidas
         } else if (hitPlayerBGoal(x, y)) {
             // Matar la tarea de la pelota!
-            sched_makeItLookLikeAnAccident();
+            sched_killBall(i);
             player_points[PLAYER_A]++;
 
             ball_x[i] = 1000;
@@ -252,6 +252,13 @@ void game_executeBallCalculations() {
             }
         }
     }
+}
+
+void game_clearBallMessage(int ball) {
+    int32_t x = message_x[ball / 3];
+    uint32_t y = message_y[ball % 3];
+    uint16_t color = message_color[ball / 3];
+    print("", x, y, color);
 }
 
 void game_executeInputCalculations() {
@@ -277,6 +284,12 @@ void game_executeFrame() {
     if (debug_chart_shown) return;
 
     game_executeFrameCalculations();
+
+    if (player_points[0] == 10 || player_points[1] == 10) {
+        // Alguien ya ganó
+        game_printWinMsg();
+        return;
+    }
 
     // Pintar pelotas
     for (int i = 0; i < 6; i++) {
@@ -326,16 +339,26 @@ void game_executeFrame() {
 
     // Pintar pelotas disponibles
     for (int i = 0; i < 6; i++) {
-        uint32_t x = message_x[i] + 10 + i;
+        uint32_t x = message_x[i / 3] + 10 + i;
         uint32_t y = points_y;
-        uint16_t color = message_color[i];
+        uint16_t color = message_color[i / 3];
 
-        if (ball_x[i] >= BOARD_W) {
+        if (ball_x[i] >= 1000) {
             printIfValid(ballChar, x, y, color);
         } else {
             printIfValid(missingBallChar, x, y, color);
         }
     }
+}
+
+void game_printWinMsg() {
+    int32_t fInit, uint32_t cInit,
+                    uint32_t fSize, uint32_t cSize,
+                    uint8_t character, uint8_t attr
+
+    //               Fila desde   ,  Columna desde  , fsize, csize
+    screen_drawBox(BOARD_H / 2 - 1, BOARD_W / 2 - 15,   3  ,  30,  '@', C_BG_BLACK + C_FG_LIGHT_GREY);
+    print(player_points[0] == 10 ? "Player A won" : "Player B won", x, y, C_BG_LIGHT_GREY + C_FG_WHITE);
 }
 
 void game_talk(const char *msg) {
