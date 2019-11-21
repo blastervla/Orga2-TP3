@@ -1,3 +1,40 @@
+## Ejercicio 1
+
+#### gdt.c
+- Llenamos las entradas de la GDT. Creamos 2 entradas para segmentos de Código
+  (lvl 0 y 3) y 2 para segmentos de Datos (lvl 0 y 3).
+- Para ello, configuramos los bits correspondientes en cada entrada:
+    - Base del segmento (en 0, queremos los primeros 163 MB de memoria)
+    - Límite del segmento (direccionamos los primeros 163 MB de memoria)
+    - Bit S (en 1, no son descriptores de sistema)
+    - Bits de tipo (Código execute only y datos read/write)
+    - Bits de DPL (0 y 3, como ya dijimos)
+    - Bit D/B en 1 (32 bits)
+    - Bit L en 0 (estamos en 32 bits)
+    - Bit G en 1 (podríamos no haberlo utilizado, pero queríamos probarlo)
+    - Bit Presente prendido
+- Agregamos un segmento para la pantalla de video:
+    - Base en 0xB8000
+    - Límite de 7999 bytes
+    - Bit S en 1
+    - Tipo datos R/W
+    - DPL = 0
+    - Bit D/B en 1
+    - Bit L en 0
+    - Bit G en 0 (esta vez nos portamos bien)
+    - Bit Presente prendido
+
+#### kernel.asm
+- Escribimos el código para pasar a modo protegido y configurar la pila del 
+  Kernel en 0x2B000.
+- Escribimos unas rutinas `limpiar_pantalla` y `draw_screen` que se encargan de
+  limpiar la pantalla y dibujarla, respectivamente.
+
+#### print.mac
+- Hicimos una copia de la macro para imprimir en la pantalla en modo real 
+  (provista por la cátedra) y la modificamos para habilitarla a imprimir en
+  modo protegido, utilizando el segmento de video creado previamente.
+
 ## Ejercicios 2 y 3
 
 #### idt.c
@@ -152,4 +189,4 @@ cursamos :P)
 - Escribimos las gdt entries de todas las TSS que necesitaremos. Estas son 6 
   para las tareas y otras 6 para sus respectivos handlers, una más para la tarea
   inicial y una última para la tarea _idle_. Para 
-- Colocamos el bit busy de la gdt entry de la tarea inicial en 1... [VER!]
+- Colocamos el bit busy de la gdt entry de la tarea inicial en 1.
