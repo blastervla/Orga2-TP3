@@ -145,13 +145,13 @@ void printPlayer(uint32_t x, uint32_t y, uint16_t color) {
 uint8_t hitPlayerAGoal(uint32_t x, uint32_t y) {
     // Devuelve true si está en la posición del goal de A y el jugador
     // A no está en la posición de impacto de la pelota!
-    return x <= PLAYER_A_GOAL + 1 && (y < player_y[0] || y > player_y[0] + 6);
+    return x <= PLAYER_A_GOAL && (y < player_y[0] || y > player_y[0] + 6);
 }
 
 uint8_t hitPlayerBGoal(uint32_t x, uint32_t y) {
     // Devuelve true si está en la posición del goal de A y el jugador
     // A no está en la posición de impacto de la pelota!
-    return x >= PLAYER_B_GOAL - 1 && (y < player_y[1] || y > player_y[1] + 6);
+    return x >= PLAYER_B_GOAL && (y < player_y[1] || y > player_y[1] + 6);
 }
 
 void game_movePlayerUp(uint8_t player) {
@@ -176,6 +176,9 @@ void game_setDefaultBallDirections(PLAYER ballIndex) {
 }
 
 void game_launchBall(PLAYER ballType) {
+    if (ball_x[ballType] < 1000) {
+        return;
+    }
     sched_newBall(ballType);
 
     // Configuramos las direcciones de la pelota y su posicion
