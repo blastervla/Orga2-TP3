@@ -113,6 +113,8 @@ char *ballChar = "O";
 char *missingBallChar = "X";
 char *playerBgChar = "@";
 
+uint8_t tick = 0;
+
 uint32_t keys[10] = {
     SCAN_CODE_W,
     SCAN_CODE_S,
@@ -127,6 +129,10 @@ uint32_t keys[10] = {
 };
 
 uint32_t keyPresses[10];
+
+void game_tick() {
+    tick = (tick + 1) % 30;
+}
 
 /* ---------------------------- UI UTILS ---------------------------- */
 void printIfValid(char* msg, uint32_t x, uint32_t y, uint16_t color) {
@@ -272,6 +278,10 @@ void game_clearBallMessage(int ball) {
 }
 
 void game_executeInputCalculations() {
+    if (tick != 0) {
+        return;
+    }
+
     if (keyPresses[PLAYER_A_UP]) game_movePlayerUp(PLAYER_A);
     if (keyPresses[PLAYER_A_DOWN]) game_movePlayerDown(PLAYER_A);
     if (keyPresses[PLAYER_A_BALL_1]) game_launchBall(PLAYER_A_TIPO_1);

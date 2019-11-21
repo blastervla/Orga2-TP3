@@ -20,6 +20,7 @@ typedef enum e_action {
 } e_action_t;
 
 void game_init();
+void game_tick();
 void game_executeFrame();
 
 void game_talk(const char *msg);

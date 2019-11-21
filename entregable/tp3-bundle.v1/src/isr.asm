@@ -30,6 +30,7 @@ extern sched_killIfNotHandler
 extern sched_killIfHandler
 
 ;; Game
+extern game_tick
 extern game_executeFrame
 extern game_talk
 extern game_getCurrentX
@@ -105,6 +106,8 @@ ISR 30
 _isr32:
     pushad
     call pic_finish1
+    ; Registrar tick en el juego (para el cálculo de input de usuario)
+    call game_tick
     ; Llamar a sched_nextTask y efectivamente cargar la tarea!
     mov cl, [current_clock]
     cmp cl, PROCESSING_TICK
