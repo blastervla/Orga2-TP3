@@ -323,7 +323,7 @@ void game_executeFrame() {
         uint16_t color = message_color[i];
 
         print_dec(player_points[i], 2, x, y, color);
-        print_dec(remaining_balls[i], 2, x + 5, y, color);
+        print_dec(remaining_balls[i], 2, x + 6, y, color);
     }
 
     if (player_points[0] >= 10 || player_points[1] >= 10) {
@@ -370,7 +370,7 @@ void game_executeFrame() {
 
     // Pintar pelotas disponibles
     for (int i = 0; i < 6; i++) {
-        uint32_t x = message_x[i / 3] + 10 + i;
+        uint32_t x = message_x[i / 3] + 12 + (i % 3);
         uint32_t y = points_y;
         uint16_t color = message_color[i / 3];
 
