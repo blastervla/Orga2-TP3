@@ -243,7 +243,7 @@ void game_executeBallCalculations() {
             if (x == BOARD_W || x == 0) {
                 ball_current_directions_x[i] *= -1;
             }
-            if (y == 0 || y == BOARD_H) {
+            if (y == 0 || y == BOARD_H - 1) {
                 ball_current_directions_y[i] *= -1;
             }
         }
@@ -366,7 +366,6 @@ uint32_t game_getCurrentY() {
 }
 
 void game_informAction(e_action_t action) {
-    breakpoint();
     uint32_t currentBall = sched_getTareaActual();
     ball_current_actions[currentBall] = action;
 }

@@ -18,5 +18,4 @@ void task() {
 
 void handler() {
     syscall_informAction(Center);
-    breakpoint();
 }

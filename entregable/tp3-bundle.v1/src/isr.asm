@@ -180,7 +180,7 @@ _isr47:
     pushad
 
     cmp eax, SYSCALL_INFORM_ACTION
-    je .talk
+    je .informAction
     cmp eax, SYSCALL_SET_HANDLER
     je .setHandler
     cmp eax, SYSCALL_WHERE
