@@ -159,6 +159,13 @@ void game_printWinMsg() {
     print(player_points[0] == 10 ? "Player A won" : "Player B won", BOARD_W / 2 - 6, BOARD_H / 2, C_BG_LIGHT_GREY + C_FG_WHITE);
 }
 
+void game_clearBallMessage(int ball) {
+    int32_t x = message_x[ball / 3];
+    uint32_t y = message_y[ball % 3];
+    uint16_t color = player_color[ball / 3];
+    print("@@@@@@@@@@@@@@@@@@@@", x, y, color);
+}
+
 uint8_t hitPlayerAGoal(uint32_t x, uint32_t y) {
     // Devuelve true si está en la posición del goal de A y el jugador
     // A no está en la posición de impacto de la pelota!
@@ -274,13 +281,6 @@ void game_executeBallCalculations() {
             }
         }
     }
-}
-
-void game_clearBallMessage(int ball) {
-    int32_t x = message_x[ball / 3];
-    uint32_t y = message_y[ball % 3];
-    uint16_t color = player_color[ball / 3];
-    print("@@@@@@@@@@@@@@@@@@@@", x, y, color);
 }
 
 void game_executeInputCalculations() {
