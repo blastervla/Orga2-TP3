@@ -6,6 +6,8 @@
 
 #include "game.h"
 
+#define MESSAGE_MAX_LEN 20
+
 uint8_t debug_mode_on = 0;
 uint8_t debug_chart_shown = 0;
 
@@ -386,8 +388,8 @@ void game_talk(const char *msg) {
     uint32_t currentBall = sched_getTareaActual();
 
     // Truncamos texto, rellenamos con espacios para limpiar
-    char displayMsg[20];
-    for (uint8_t i = 0; i < 20; i++) {
+    char displayMsg[MESSAGE_MAX_LEN + 1];
+    for (uint8_t i = 0; i < MESSAGE_MAX_LEN; i++) {
         char toWrite = ' ';
         if (*msg != 0) {
             toWrite = *msg;
@@ -395,6 +397,8 @@ void game_talk(const char *msg) {
         }
         displayMsg[i] = toWrite;
     }
+    // Agregamos el NULL terminator
+    displayMsg[MESSAGE_MAX_LEN] = '\0';
     
     // Las 1ras 3 tareas son del Player A, las otras 3 del Player B
     uint32_t x = message_x[currentBall / 3];
