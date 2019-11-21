@@ -138,9 +138,10 @@ Implementamos las funciones:
       y el índice obtenido de la dirección lineal para obtener la PDE (Page
       Directory Entry).
     - Si la tabla referenciada en la PDE no existe, la creamos con el 
-      privilegio correspondiente.
+      privilegio correspondiente y como Read/Write.
     - Finalmente, obtenemos la PTE referenciada, la ponemos presente y le 
-      configuramos la base shifteando la dirección física provista.
+      configuramos la base shifteando la dirección física provista, y la
+      configuramos con el privilegio adecuado y como Read/Write.
     - Flusheamos (invalida la TLB)
 - `mmu_createTable`: Se encarga de crear una tabla nueva desde 0, llenando
   todas las PTEs de la misma y configurándolas como "No presentes".
@@ -182,11 +183,66 @@ cursamos :P)
 - Creamos el método `tss_ball_reset`, que se encarga de reconfigurar el tss de
   una de las tareas de pelotas previo a su ejecución (en particular por el stack
   y un par de cosas más). Usaremos este método siempre que queramos lanzar una
-  nueva pelota o una tarea handler.
+  nueva pelota. Hicimos una función `tss_ball_handler_reset` análoga, específica
+  para los handlers, puesto que hay algunas diferencias entre los stacks de las
+  pelotas y los handlers.
 
+- En las TSS's, configuramos:
+    - ESP0: Pedimos una nueva página de kernel para el stack lvl 0 y le asignamos
+            el final de esta página.
+    - SS0 = Segmento de datos Lvl. 0
+    - CR3 = Dirección del Page Directory de la tarea
+    - EIP = 0x8000000
+    - EFLAGS = 0x202 (interrupciones habilitadas)
+    - ESP: Stack de nivel 3 de la tarea (varía si es o no es handler)
+    - Registros selectores de segmento: Segmento de datos Lvl. 3
+    - Todo el resto de los registros en 0
 
 #### gdt.c
 - Escribimos las gdt entries de todas las TSS que necesitaremos. Estas son 6 
   para las tareas y otras 6 para sus respectivos handlers, una más para la tarea
   inicial y una última para la tarea _idle_. Para 
 - Colocamos el bit busy de la gdt entry de la tarea inicial en 1.
+
+## Ejercicio 7
+
+#### defines.h y defines.mac
+Metimos varias constantes afines al juego (keys, configs, etc.)
+
+#### game.h y game.c
+TODO
+
+#### i386.h
+Agregamos inlines para conseguir los valores de los registros de propósito general
+
+#### isr.asm
+- Excepciones
+    - En lugar de printear en pantalla como veníamos haciendo, comenzamos a llamar
+      a la función `game_showDebugInfo` para mostrar la pantalla de debug.
+- isr32 (clock)
+    - Agregamos el comportamiento de salto de tarea y el llamado a
+      `game_executeFrame` en el tick 7 para que se hagan los cálculos propios del
+      juego y el dibujado de la pantalla.
+- isr33 (teclado)
+    - Llamamos a `game_kbInput` para que parsee el input.
+- isr47 (syscalls)
+    - Implementamos las syscalls pedidas por la cátedra, delegando a `game.c`
+      siempre que podamos.
+
+#### kernel.asm
+- Llamamos a `sched_init` y `game_init` para inicializar todas las estructuras
+  correspondientes.
+
+#### sched.c
+- Agregamos estructuras para almacenar los selectores de las TSS's de las tareas
+  (pelotas y handlers correspondientes), así como las direcciones de los handlers
+  (que serán configurados conforme se registren).
+- Creamos funciones de utilidad (e.g: `sched_isHandler`, que indica si la tarea
+  actualmente en ejecución es un handler).
+- Definimos las funciones necesarias para proveer el comportamiento deseado del
+  módulo.
+
+#### screen.c
+- Agregamos funciones para guardar y restaurar la pantalla en y desde un puntero a
+  words de Text UI. Estas son utilizadas cuando queremos mostrar el mensaje del
+  modo debug (y posteriormente reanudar el juego).
