@@ -449,12 +449,27 @@ void game_kbInput(uint32_t input) {
 
 char *get_exception_str(uint32_t exception);
 
-void game_showDebugInfo(uint32_t exception, uint32_t error_code) {
+void game_showDebugInfo(
+        uint32_t exception,  
+        uint32_t pa_edi,
+        uint32_t pa_esi,
+        uint32_t pa_ebp,
+        uint32_t pa_esp,
+        uint32_t pa_ebx,
+        uint32_t pa_edx,
+        uint32_t pa_ecx,
+        uint32_t pa_eax,   
+        uint32_t pchg_error_code,
+        uint32_t pchg_eip,
+        uint16_t pchg_cs,
+        uint32_t pchg_eflags,
+        uint32_t pchg_esp,
+        uint16_t pchg_ss) {
     if (!debug_mode_on) {
         print_dec(exception, 2, BOARD_W / 2 - 14, 3, C_BG_DARK_GREY + C_FG_WHITE);
         char *str = get_exception_str(exception);
         print(str, BOARD_W / 2 - 11, 3, C_BG_DARK_GREY + C_FG_WHITE);
-        print_dec(error_code, 3, BOARD_W / 2 - 20, 3, C_BG_DARK_GREY + C_FG_WHITE);
+        print_dec(pchg_error_code, 3, BOARD_W / 2 - 20, 3, C_BG_DARK_GREY + C_FG_WHITE);
         return;
     }
 
@@ -471,37 +486,37 @@ void game_showDebugInfo(uint32_t exception, uint32_t error_code) {
     print(str, BOARD_W / 2 - 11, 3, C_BG_DARK_GREY + C_FG_WHITE);
 
     print(    "0x",         BOARD_W / 2 + 10, 3,   C_BG_DARK_GREY + C_FG_WHITE);
-    print_hex(error_code, 2,BOARD_W / 2 + 12, 3,   C_BG_DARK_GREY + C_FG_WHITE);
+    print_hex(pchg_error_code, 2,BOARD_W / 2 + 12, 3,   C_BG_DARK_GREY + C_FG_WHITE);
 
     print(      eax_str,    BOARD_W / 2 - 13,   6,  C_BG_LIGHT_GREY + C_FG_BLACK);
-    print_hex(  reax(), 8,  BOARD_W / 2 - 8,    6,  C_BG_LIGHT_GREY + C_FG_WHITE);
+    print_hex(  pa_eax, 8,  BOARD_W / 2 - 8,    6,  C_BG_LIGHT_GREY + C_FG_WHITE);
 
     print(      ebx_str,    BOARD_W / 2 - 13,   8,  C_BG_LIGHT_GREY + C_FG_BLACK);
-    print_hex(  rebx(), 8,  BOARD_W / 2 - 8,    8,  C_BG_LIGHT_GREY + C_FG_WHITE);
+    print_hex(  pa_ebx, 8,  BOARD_W / 2 - 8,    8,  C_BG_LIGHT_GREY + C_FG_WHITE);
 
     print(      ecx_str,    BOARD_W / 2 - 13,   10,  C_BG_LIGHT_GREY + C_FG_BLACK);
-    print_hex(  recx(), 8,  BOARD_W / 2 - 8,    10,  C_BG_LIGHT_GREY + C_FG_WHITE);
+    print_hex(  pa_ecx, 8,  BOARD_W / 2 - 8,    10,  C_BG_LIGHT_GREY + C_FG_WHITE);
 
     print(      edx_str,    BOARD_W / 2 - 13,   12,  C_BG_LIGHT_GREY + C_FG_BLACK);
-    print_hex(  redx(), 8,  BOARD_W / 2 - 8,    12,  C_BG_LIGHT_GREY + C_FG_WHITE);
+    print_hex(  pa_edx, 8,  BOARD_W / 2 - 8,    12,  C_BG_LIGHT_GREY + C_FG_WHITE);
 
     print(      esi_str,    BOARD_W / 2 - 13,   14,  C_BG_LIGHT_GREY + C_FG_BLACK);
-    print_hex(  resi(), 8,  BOARD_W / 2 - 8,    14,  C_BG_LIGHT_GREY + C_FG_WHITE);
+    print_hex(  pa_esi, 8,  BOARD_W / 2 - 8,    14,  C_BG_LIGHT_GREY + C_FG_WHITE);
 
     print(      edi_str,    BOARD_W / 2 - 13,   16,  C_BG_LIGHT_GREY + C_FG_BLACK);
-    print_hex(  redi(), 8,  BOARD_W / 2 - 8,    16,  C_BG_LIGHT_GREY + C_FG_WHITE);
+    print_hex(  pa_edi, 8,  BOARD_W / 2 - 8,    16,  C_BG_LIGHT_GREY + C_FG_WHITE);
 
     print(      ebp_str,    BOARD_W / 2 - 13,   18,  C_BG_LIGHT_GREY + C_FG_BLACK);
-    print_hex(  rebp(), 8,  BOARD_W / 2 - 8,    18,  C_BG_LIGHT_GREY + C_FG_WHITE);
+    print_hex(  pa_ebp, 8,  BOARD_W / 2 - 8,    18,  C_BG_LIGHT_GREY + C_FG_WHITE);
 
     print(      esp_str,    BOARD_W / 2 - 13,   20,  C_BG_LIGHT_GREY + C_FG_BLACK);
-    print_hex(  resp(), 8,  BOARD_W / 2 - 8,    20,  C_BG_LIGHT_GREY + C_FG_WHITE);
+    print_hex(  pa_esp, 8,  BOARD_W / 2 - 8,    20,  C_BG_LIGHT_GREY + C_FG_WHITE);
 
     // print(      eip_str,    BOARD_W / 2 - 13,   22,  C_BG_LIGHT_GREY + C_FG_BLACK);
     // print_hex(  reip(), 8,  BOARD_W / 2 - 8,    22,  C_BG_LIGHT_GREY + C_FG_WHITE);
 
     print(      cs_str,     BOARD_W / 2 - 13,   24,  C_BG_LIGHT_GREY + C_FG_BLACK);
-    print_hex(  rcs(), 4,   BOARD_W / 2 - 8,    24,  C_BG_LIGHT_GREY + C_FG_WHITE);
+    print_hex(  pchg_cs, 4,   BOARD_W / 2 - 8,    24,  C_BG_LIGHT_GREY + C_FG_WHITE);
 
     print(      ds_str,     BOARD_W / 2 - 13,   26,  C_BG_LIGHT_GREY + C_FG_BLACK);
     print_hex(  rds(), 4,   BOARD_W / 2 - 8,    26,  C_BG_LIGHT_GREY + C_FG_WHITE);
@@ -516,10 +531,10 @@ void game_showDebugInfo(uint32_t exception, uint32_t error_code) {
     print_hex(  rgs(), 4,   BOARD_W / 2 - 8,    32,  C_BG_LIGHT_GREY + C_FG_WHITE);
 
     print(      ss_str,     BOARD_W / 2 - 13,   34,  C_BG_LIGHT_GREY + C_FG_BLACK);
-    print_hex(  rss(), 4,   BOARD_W / 2 - 8,    34,  C_BG_LIGHT_GREY + C_FG_WHITE);
+    print_hex(  pchg_ss, 4,   BOARD_W / 2 - 8,    34,  C_BG_LIGHT_GREY + C_FG_WHITE);
 
     print(      eflags_str,     BOARD_W / 2 - 13,   37,  C_BG_LIGHT_GREY + C_FG_BLACK);
-    print_hex(  reflags(), 8,   BOARD_W / 2 - 5,    37,  C_BG_LIGHT_GREY + C_FG_WHITE);
+    print_hex(  pchg_eflags, 8,   BOARD_W / 2 - 5,    37,  C_BG_LIGHT_GREY + C_FG_WHITE);
 
     print(      cr0_str,     BOARD_W / 2 + 1,   6,  C_BG_LIGHT_GREY + C_FG_BLACK);
     print_hex(  rcr0(), 8,   BOARD_W / 2 + 6,   6,  C_BG_LIGHT_GREY + C_FG_WHITE);

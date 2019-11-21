@@ -67,11 +67,35 @@ _isr%1:
 
     ; Luego del cambio de privilegio, tenemos el error code al tope de la pila
     ; si lo hubo, y sino el EIP. No pusheamos nada porque ya està en la pila
+    ;
+    ; Pila despues del cambio de privilegio
+
+
+    pushad
+
+    ; Pila
+    ;   EDI
+    ;   ESI
+    ;   EBP
+    ;   ESP
+    ;   EBX
+    ;   EDX
+    ;   ECX
+    ;   EAX
+    ;   Error code
+    ;   EIP
+    ;   CS
+    ;   EFLAGS
+    ;   ESP
+    ;   SS
+
     push %1
     ; call print_dec
     call game_showDebugInfo
 
     mov eax, %1
+
+    add esp, 60
     jmp $
 
 %endmacro
@@ -265,7 +289,6 @@ _isr47:
 isrNumber:           dd 0x00000000
 isrClock:            db '|/-\'
 nextClock:
-        pushad
         inc DWORD [isrNumber]
         mov ebx, [isrNumber]
         cmp ebx, 0x4
@@ -275,7 +298,6 @@ nextClock:
         .ok:
                 add ebx, isrClock
                 print_text_pm ebx, 1, 0x0f, 49, 79
-                popad
         ret
 
 saltarAIdle:
