@@ -6,8 +6,6 @@
 
 #include "game.h"
 
-#define MESSAGE_MAX_LEN 20
-
 uint8_t debug_mode_on = 0;
 uint8_t debug_chart_shown = 0;
 
@@ -89,6 +87,11 @@ uint32_t player_points[2] = {
     0
 };
 
+uint32_t remaining_balls[2] = {
+    15,
+    15
+};
+
 uint32_t player_x[2] = {
     0,
     79
@@ -156,13 +159,6 @@ void game_printWinMsg() {
     print(player_points[0] == 10 ? "Player A won" : "Player B won", BOARD_W / 2 - 6, BOARD_H / 2, C_BG_LIGHT_GREY + C_FG_WHITE);
 }
 
-void game_clearBallMessage(int ball) {
-    int32_t x = message_x[ball / 3];
-    uint32_t y = message_y[ball % 3];
-    uint16_t color = player_color[ball / 3];
-    print("@@@@@@@@@@@@@@@@@@@@", x, y, color);
-}
-
 uint8_t hitPlayerAGoal(uint32_t x, uint32_t y) {
     // Devuelve true si está en la posición del goal de A y el jugador
     // A no está en la posición de impacto de la pelota!
@@ -207,6 +203,7 @@ void game_launchBall(PLAYER ballType) {
 
     ball_x[ballType] = player_x[ballType / 3] + ball_current_directions_x[ballType];
     ball_y[ballType] = player_y[ballType / 3] + PLAYER_SIZE / 2;
+    remaining_balls[ballType / 3]--;
 }
 
 void game_init() {
@@ -279,6 +276,13 @@ void game_executeBallCalculations() {
     }
 }
 
+void game_clearBallMessage(int ball) {
+    int32_t x = message_x[ball / 3];
+    uint32_t y = message_y[ball % 3];
+    uint16_t color = player_color[ball / 3];
+    print("@@@@@@@@@@@@@@@@@@@@", x, y, color);
+}
+
 void game_executeInputCalculations() {
     if (tick != 0) {
         return;
@@ -294,6 +298,10 @@ void game_executeInputCalculations() {
     if (keyPresses[PLAYER_B_BALL_1]) game_launchBall(PLAYER_B_TIPO_1);
     if (keyPresses[PLAYER_B_BALL_2]) game_launchBall(PLAYER_B_TIPO_2);
     if (keyPresses[PLAYER_B_BALL_3]) game_launchBall(PLAYER_B_TIPO_3);
+
+    for(int i = 0; i < 10; i++) {
+        keyPresses[i] = 0;
+    }
 }
 
 void game_executeFrameCalculations() {
@@ -377,8 +385,8 @@ void game_talk(const char *msg) {
     uint32_t currentBall = sched_getTareaActual();
 
     // Truncamos texto, rellenamos con espacios para limpiar
-    char displayMsg[MESSAGE_MAX_LEN + 1];
-    for (uint8_t i = 0; i < MESSAGE_MAX_LEN; i++) {
+    char displayMsg[20];
+    for (uint8_t i = 0; i < 20; i++) {
         char toWrite = ' ';
         if (*msg != 0) {
             toWrite = *msg;
@@ -386,8 +394,6 @@ void game_talk(const char *msg) {
         }
         displayMsg[i] = toWrite;
     }
-    // Agregamos el NULL terminator
-    displayMsg[MESSAGE_MAX_LEN] = '\0';
     
     // Las 1ras 3 tareas son del Player A, las otras 3 del Player B
     uint32_t x = message_x[currentBall / 3];
@@ -432,8 +438,6 @@ void game_kbInput(uint32_t input) {
     for(int i = 0; i < 10; i++) {
         if(keys[i] == input) {
             keyPresses[i] = 1;
-        } else if (BREAK_CODE(keys[i]) == input) {
-            keyPresses[i] = 0;
         }
     }
 }
