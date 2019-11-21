@@ -200,7 +200,7 @@ void game_setDefaultBallDirections(PLAYER ballIndex) {
 }
 
 void game_launchBall(PLAYER ballType) {
-    if (ball_x[ballType] < 1000) {
+    if (ball_x[ballType] < 1000 || remaining_balls[ballType / 3] == 0) {
         return;
     }
     sched_newBall(ballType);
@@ -323,6 +323,7 @@ void game_executeFrame() {
         uint16_t color = message_color[i];
 
         print_dec(player_points[i], 2, x, y, color);
+        print_dec(remaining_balls[i], 2, x + 5, y, color);
     }
 
     if (player_points[0] >= 10 || player_points[1] >= 10) {
