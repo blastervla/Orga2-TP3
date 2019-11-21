@@ -90,13 +90,13 @@ uint32_t sched_getTareaActual() {
 
 void sched_registerHandler(f_handler_t* f) {
 	sched_killIfHandler();
+	uint32_t player = sched_getTareaActual();
 	// El handler siempre está en el índice anterior a la tarea:
 	uint8_t handlerIndex = iTareaActual - 1;
-	if (handlers[handlerIndex] != NULL) {
+	if (handlers[player] != NULL) {
 		// Entonces ya estaba setteado el handler!
 		sched_makeItLookLikeAnAccident();
 	} else {
-		uint32_t player = sched_getTareaActual();
 		tareas[handlerIndex] = handlersTSS[player];
 		handlers[player] = f;
 	}
