@@ -109,7 +109,7 @@ e_action_t ball_current_actions[6];
 short ball_current_directions_x[6];
 short ball_current_directions_y[6];
 
-char *ballChar = "o";
+char *ballChar = "O";
 char *missingBallChar = "X";
 char *playerBgChar = "@";
 
@@ -267,8 +267,8 @@ void game_executeBallCalculations() {
 void game_clearBallMessage(int ball) {
     int32_t x = message_x[ball / 3];
     uint32_t y = message_y[ball % 3];
-    uint16_t color = message_color[ball / 3];
-    print("", x, y, color);
+    uint16_t color = player_color[ball / 3];
+    print("@@@@@@@@@@@@@@@@@@@@", x, y, color);
 }
 
 void game_executeInputCalculations() {
@@ -294,6 +294,16 @@ void game_executeFrame() {
     if (debug_chart_shown) return;
 
     game_executeFrameCalculations();
+
+    // Pintar puntos
+    for (int i = 0; i < 2; i++) {
+        // Limpiar anteriores
+        uint32_t x = message_x[i];
+        uint32_t y = points_y;
+        uint16_t color = message_color[i];
+
+        print_dec(player_points[i], 2, x, y, color);
+    }
 
     if (player_points[0] >= 10 || player_points[1] >= 10) {
         // Alguien ya ganó
@@ -335,16 +345,6 @@ void game_executeFrame() {
         
         // Actualizar posición previa
         prev_player_y[i] = y;
-    }
-
-    // Pintar puntos
-    for (int i = 0; i < 2; i++) {
-        // Limpiar anteriores
-        uint32_t x = message_x[i];
-        uint32_t y = points_y;
-        uint16_t color = message_color[i];
-
-        print_dec(player_points[i], 2, x, y, color);
     }
 
     // Pintar pelotas disponibles
