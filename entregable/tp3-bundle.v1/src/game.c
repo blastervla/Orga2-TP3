@@ -238,6 +238,8 @@ void game_executeBallCalculations() {
 
             ball_x[i] = 1000;
             ball_y[i] = 1000; // Posiciones invalidas
+
+            game_clearBallMessage(i);
         } else if (hitPlayerBGoal(x, y)) {
             // Matar la tarea de la pelota!
             sched_killBall(i);
@@ -245,6 +247,8 @@ void game_executeBallCalculations() {
 
             ball_x[i] = 1000;
             ball_y[i] = 1000; // Posiciones invalidas
+
+            game_clearBallMessage(i);
         } else {
             ball_x[i] = x;
             ball_y[i] = y;
@@ -291,7 +295,7 @@ void game_executeFrame() {
 
     game_executeFrameCalculations();
 
-    if (player_points[0] == 10 || player_points[1] == 10) {
+    if (player_points[0] >= 10 || player_points[1] >= 10) {
         // Alguien ya ganó
         game_printWinMsg();
         return;
@@ -350,9 +354,9 @@ void game_executeFrame() {
         uint16_t color = message_color[i / 3];
 
         if (ball_x[i] >= 1000) {
-            printIfValid(ballChar, x, y, color);
+            print(ballChar, x, y, color);
         } else {
-            printIfValid(missingBallChar, x, y, color);
+            print(missingBallChar, x, y, color);
         }
     }
 }
