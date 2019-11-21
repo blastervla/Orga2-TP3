@@ -118,13 +118,13 @@ void sched_killIfHandler() {
 }
 
 void sched_makeItLookLikeAnAccident() {
-	tareas[iTareaActual - 1] = NULL;
-	tareas[iTareaActual] = NULL;
-
+	uint32_t player = sched_getTareaActual();
+	sched_killBall(player);
 	saltarAIdle();
 }
 
 void sched_killBall(int iBall) {
 	tareas[iBall * 2] = NULL;
 	tareas[iBall * 2 + 1] = NULL;
+	handlers[iBall] = NULL;
 }
