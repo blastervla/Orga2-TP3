@@ -31,6 +31,7 @@ char *cr0_str = "cr0:";
 char *cr2_str = "cr2:";
 char *cr3_str = "cr3:";
 char *cr4_str = "cr4:";
+char *stack_str = "stk:";
 
 char *UNKNOWN_EXCEPTION = "Unknown";
 char *EXCEPTION_0 = "Divide by Zero";
@@ -557,6 +558,9 @@ void game_showDebugInfo(
 
     print(      cr4_str,     BOARD_W / 2 + 1,   12,  C_BG_LIGHT_GREY + C_FG_BLACK);
     print_hex(  rcr4(), 8,   BOARD_W / 2 + 6,   12,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print(      stack_str,     BOARD_W / 2 + 1,   24,  C_BG_LIGHT_GREY + C_FG_BLACK);
+    print_hex(  *((uint32_t *)pchg_esp + 0), 8,   BOARD_W / 2 + 6,    24,  C_BG_LIGHT_GREY + C_FG_WHITE);
 
     // TODO: Preguntar --> Hace falta el stack? Alta paja...
     //       Also, el EIP tiene sentido? Es un quilombo...

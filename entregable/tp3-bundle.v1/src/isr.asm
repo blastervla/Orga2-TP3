@@ -85,6 +85,7 @@ _isr%1:
     ;   EDX
     ;   ECX
     ;   EAX
+    ; priv chg
     ;   Error code
     ;   EIP
     ;   CS
