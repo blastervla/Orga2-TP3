@@ -28,6 +28,8 @@ extern sched_getTareaActual
 extern sched_registerHandler
 extern sched_killIfNotHandler
 extern sched_killIfHandler
+extern sched_killCurrent
+extern sched_makeItLookLikeAnAccident
 
 ;; Game
 extern game_tick
@@ -38,6 +40,8 @@ extern game_getCurrentY
 extern game_informAction
 extern game_kbInput
 extern game_showDebugInfo
+extern game_isDebugChartOn
+extern game_killCurrentBall
 
 extern print_dec
 
@@ -70,7 +74,6 @@ _isr%1:
     ;
     ; Pila despues del cambio de privilegio
 
-
     pushad
 
     ; Pila
@@ -91,12 +94,13 @@ _isr%1:
 
     push %1
     ; call print_dec
+    call game_killCurrentBall
     call game_showDebugInfo
+    call sched_makeItLookLikeAnAccident
 
-    mov eax, %1
-
-    add esp, 60
-    jmp $
+    add esp, 4
+    popad
+    iret
 
 %endmacro
 
@@ -130,6 +134,12 @@ ISR 30
 _isr32:
     pushad
     call pic_finish1
+
+    ; Si está el modo debug no queremos seguir con la logica del juego.
+    call game_isDebugChartOn
+    cmp ax, 0
+    jne .end
+
     ; Registrar tick en el juego (para el cálculo de input de usuario)
     call game_tick
     ; Llamar a sched_nextTask y efectivamente cargar la tarea!

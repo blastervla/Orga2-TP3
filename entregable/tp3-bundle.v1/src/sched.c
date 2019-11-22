@@ -118,9 +118,13 @@ void sched_killIfHandler() {
 }
 
 void sched_makeItLookLikeAnAccident() {
+	sched_killCurrent();
+	saltarAIdle();
+}
+
+void sched_killCurrent() {
 	uint32_t player = sched_getTareaActual();
 	sched_killBall(player);
-	saltarAIdle();
 }
 
 void sched_killBall(int iBall) {

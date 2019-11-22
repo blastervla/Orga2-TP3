@@ -35,5 +35,6 @@ void sched_killIfHandler();
 void sched_makeItLookLikeAnAccident();
 
 void sched_killBall(int iBall);
+void sched_killCurrent();
 
 #endif	/* !__SCHED_H__ */

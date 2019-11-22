@@ -133,15 +133,21 @@ void tss_new_ball (PLAYER player, uint8_t isHandler) {
 }
 
 void tss_ball_reset(PLAYER player) {
-	tss_ball_tasks[player * 2].esp0 = tss_ball_esp0s[player] + PAGE_SIZE / 2;
+	tss_ball_tasks[player * 2].esp0 = tss_ball_esp0s[player] + (PAGE_SIZE / 2) - 4;
 	tss_ball_tasks[player * 2].eip = TASK_CODE_ADDR;
 	tss_ball_tasks[player * 2].esp = TASK_CODE_ADDR + 7 * 1024 - 4;
     tss_ball_tasks[player * 2].eflags = 0x202;
+
+    tss_ball_tasks[player * 2].cs = (GDT_CODE_3 << 3) + 3;
+    tss_ball_tasks[player * 2].ss = (GDT_DATA_3 << 3) + 3;
 }
 
 void tss_ball_handler_reset(PLAYER player, f_handler_t* handler) {
-	tss_ball_tasks[player * 2 + 1].esp0 = tss_ball_esp0s[player] + PAGE_SIZE;
+	tss_ball_tasks[player * 2 + 1].esp0 = tss_ball_esp0s[player] + PAGE_SIZE - 4;
 	tss_ball_tasks[player * 2 + 1].eip = (uint32_t) handler;
 	tss_ball_tasks[player * 2 + 1].esp = TASK_CODE_ADDR + 8 * 1024 - 4;
     tss_ball_tasks[player * 2 + 1].eflags = 0x202;
+
+    tss_ball_tasks[player * 2 + 1].cs = (GDT_CODE_3 << 3) + 3;
+    tss_ball_tasks[player * 2 + 1].ss = (GDT_DATA_3 << 3) + 3;
 }

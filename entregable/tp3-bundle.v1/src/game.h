@@ -48,4 +48,7 @@ void game_showDebugInfo(
         uint32_t pchg_esp,
         uint16_t pchg_ss);
 
+uint32_t game_isDebugChartOn();
+void game_killCurrentBall();
+
 #endif  /* !__GAME_H__ */

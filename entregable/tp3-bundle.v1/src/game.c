@@ -312,9 +312,6 @@ void game_executeFrameCalculations() {
 }
 
 void game_executeFrame() {
-    // Cuando estamos mostrando el chart del modo debug, el juego se pausa!
-    if (debug_chart_shown) return;
-
     game_executeFrameCalculations();
 
     // Pintar puntos
@@ -449,6 +446,17 @@ void game_kbInput(uint32_t input) {
 
 char *get_exception_str(uint32_t exception);
 
+void game_killCurrentBall(){
+    uint32_t player = sched_getTareaActual();
+    uint16_t color = bg_color;
+    printIfValid(ballChar, ball_x[player], ball_y[player], color);
+    prev_ball_x[player] = 1000;
+    prev_ball_y[player] = 1000; 
+    ball_x[player] = 1000;
+    ball_y[player] = 1000;
+    game_clearBallMessage(player);
+}
+
 void game_showDebugInfo(
         uint32_t exception,  
         uint32_t pa_edi,
@@ -466,10 +474,6 @@ void game_showDebugInfo(
         uint32_t pchg_esp,
         uint16_t pchg_ss) {
     if (!debug_mode_on) {
-        print_dec(exception, 2, BOARD_W / 2 - 14, 3, C_BG_DARK_GREY + C_FG_WHITE);
-        char *str = get_exception_str(exception);
-        print(str, BOARD_W / 2 - 11, 3, C_BG_DARK_GREY + C_FG_WHITE);
-        print_dec(pchg_error_code, 3, BOARD_W / 2 - 20, 3, C_BG_DARK_GREY + C_FG_WHITE);
         return;
     }
 
@@ -553,6 +557,11 @@ void game_showDebugInfo(
 
     debug_chart_shown = 1;
 }
+
+uint32_t game_isDebugChartOn() {
+    return debug_chart_shown;
+}
+
 
 char *get_exception_str(uint32_t exception) {
     switch (exception) {

@@ -13,6 +13,9 @@ void task() {
     syscall_talk(message);
     syscall_setHandler(handler);
 
+    // Descomentar para que la tarea muera, y se pueda ver la pantalla de debug
+    //char* p = (char*) 0; *p = 0; 
+
     while(1) { __asm __volatile("mov $2, %%eax":::"eax"); }
 }
 
