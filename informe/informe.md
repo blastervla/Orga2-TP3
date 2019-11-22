@@ -210,7 +210,20 @@ cursamos :P)
 Metimos varias constantes afines al juego (keys, configs, etc.)
 
 #### game.h y game.c
-TODO
+- Creamos todas las estructuras necesarias para el manejo del juego.
+- Creamos la función `game_executeFrame` que se encarga de ejecutar todos los
+  cálculos del juego y dibujado de pantalla.
+- Agregamos una función `game_talk` que será llamada por la syscall
+  `talk`.
+- Agregamos una función `game_informAction` que será llamada por la syscall
+  `informAction`.
+- Agregamos una función `game_kbInput` que registrará el input del usuario. Junto
+  con `game_executeFrame` y `game_tick`, estos inputs serán tomados en cuenta en
+  el momento adecuado (la consigna decía cada 30 ticks, pero lo hicimos cada 
+  menos porque nos parecía injugable de otra forma, las paletas se movían muy 
+  lento en comparación con las pelotas).
+- Creamos la función `game_showDebugInfo` que se encarga de mostrar el chart de
+  debug.
 
 #### i386.h
 Agregamos inlines para conseguir los valores de los registros de propósito general
