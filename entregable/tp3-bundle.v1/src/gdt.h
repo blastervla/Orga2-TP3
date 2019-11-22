@@ -1,3 +1,4 @@
+
 /* ** por compatibilidad se omiten tildes **
 ================================================================================
  TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
@@ -35,5 +36,6 @@ typedef struct str_gdt_entry {
 /* Tabla GDT */
 extern gdt_entry gdt[];
 extern gdt_descriptor GDT_DESC;
+extern void gdt_init();
 
 #endif  /* !__GDT_H__ */

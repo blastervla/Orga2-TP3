@@ -7,6 +7,30 @@
 
 #include "screen.h"
 
+void save_screen(ca (*buffer)[SCREEN_H * SCREEN_W]) {
+    ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO; // magia
+
+    uint32_t i = 0;
+    for (int32_t y = 0; y < SCREEN_H; y++) {
+        for (int32_t x = 0; x < SCREEN_W; x++) {
+            (*buffer)[i] = p[y][x];
+            i++;
+        }
+    }
+}
+
+void restore_screen(ca (*buffer)[SCREEN_H * SCREEN_W]) {
+    ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO; // magia
+
+    uint32_t i = 0;
+    for (int32_t y = 0; y < SCREEN_H; y++) {
+        for (int32_t x = 0; x < SCREEN_W; x++) {
+            p[y][x] = (*buffer)[i];
+            i++;
+        }
+    }
+}
+
 void print(const char* text, uint32_t x, uint32_t y, uint16_t attr) {
     ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO; // magia
     int32_t i;

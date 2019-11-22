@@ -14,18 +14,6 @@
 #include "tss.h"
 #include "game.h"
 
-#define PRIVILEDGE_LEVEL uint8_t
-#define PRIVILEDGE_LEVEL_SUPERVISOR 0
-#define PRIVILEDGE_LEVEL_TASK 1
-
-#define PLAYER uint8_t
-#define PLAYER_A_TIPO_1 0
-#define PLAYER_A_TIPO_2 1
-#define PLAYER_A_TIPO_3 2
-#define PLAYER_B_TIPO_1 3
-#define PLAYER_B_TIPO_2 4
-#define PLAYER_B_TIPO_3 5
-
 void mmu_init();
 
 uint32_t mmu_nextFreeKernelPage();

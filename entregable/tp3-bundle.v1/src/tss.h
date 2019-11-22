@@ -14,6 +14,8 @@
 #include "gdt.h"
 #include "mmu.h"
 
+typedef void (*f_handler_t)();
+
 typedef struct str_tss {
     uint16_t  ptl;
     uint16_t  unused0;
@@ -58,6 +60,11 @@ typedef struct str_tss {
 extern tss tss_initial;
 extern tss tss_idle;
 
+extern tss tss_ball_tasks[12];
+
 void tss_init();
+
+void tss_ball_reset(PLAYER player);
+void tss_ball_handler_reset(PLAYER player, f_handler_t* handler);
 
 #endif  /* !__TSS_H__ */

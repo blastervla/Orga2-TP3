@@ -9,9 +9,12 @@
 void handler(void);
 
 void task() {
-    char* message = "Tarea B3";
+    char* message = "Po ke? No hay po ke";
     syscall_talk(message);
     syscall_setHandler(handler);
+
+    // Descomentar para que la tarea muera, y se pueda ver la pantalla de debug
+    //char* p = (char*) 0xFFFFFFFF; *p = 0; 
 
     while(1) { __asm __volatile("mov $6, %%eax":::"eax"); }
 }

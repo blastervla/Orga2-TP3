@@ -10,8 +10,6 @@
 #include "isr.h"
 #include "tss.h"
 
-#define GDT_CODE_0 14<<3
-
 // P | DPL | 0 D 1 1 0 | 0 0 0
 #define IDT_ENTRY_ATTR_KERNEL  0b1000111000000000
 #define IDT_ENTRY_ATTR_PEASANT 0b1110111000000000
@@ -41,7 +39,7 @@ idt_descriptor IDT_DESC = {
 
 #define IDT_ENTRY(numero, attrVal)                                                                  \
     idt[numero].offset_0_15 = (uint16_t) ((uint32_t)(&_isr ## numero) & (uint32_t) 0xFFFF);         \
-    idt[numero].segsel = (uint16_t) GDT_CODE_0;                                                     \
+    idt[numero].segsel = (uint16_t) GDT_CODE_0 << 3;                                                     \
     idt[numero].attr = (uint16_t) attrVal;                                                          \
     idt[numero].offset_16_31 = (uint16_t) ((uint32_t)(&_isr ## numero) >> 16 & (uint32_t) 0xFFFF);
 

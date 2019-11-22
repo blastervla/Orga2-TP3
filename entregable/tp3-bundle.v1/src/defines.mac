@@ -9,10 +9,20 @@
 %define BOARD_H 40
 %define BOARD_W 78
 
-%define GDT_CODE_0 14<<3
-%define GDT_CODE_3 15<<3
-%define GDT_DATA_0 16<<3
-%define GDT_DATA_3 17<<3
-%define GDT_VIDEO 18<<3
+%define GDT_IDX_CODE_0 14
+%define GDT_IDX_CODE_3 15
+%define GDT_IDX_DATA_0 16
+%define GDT_IDX_DATA_3 17
+%define GDT_IDX_VIDEO 18
+
+%define GDT_IDX_TSS_INIT	19
+%define GDT_IDX_TSS_IDLE	20
+
+%define SYSCALL_TALK			0x80000001
+%define SYSCALL_WHERE			0x80000002
+%define SYSCALL_SET_HANDLER		0x80000003
+%define SYSCALL_INFORM_ACTION	0x8000FFFF
+
+%define KERNEL_STACK_BASE 0x2B000 
 
 %endif

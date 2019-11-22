@@ -22,6 +22,9 @@ typedef struct ca_s {
     uint8_t a;
 } ca;
 
+void save_screen(ca (*buffer)[SCREEN_H * SCREEN_W]);
+void restore_screen(ca (*buffer)[SCREEN_H * SCREEN_W]);
+
 void print(const char* text, uint32_t x, uint32_t y, uint16_t attr);
 void print_dec(uint32_t numero, uint32_t size, uint32_t x, uint32_t y, uint16_t attr);
 void print_hex(uint32_t numero, int32_t size, uint32_t x, uint32_t y, uint16_t attr);

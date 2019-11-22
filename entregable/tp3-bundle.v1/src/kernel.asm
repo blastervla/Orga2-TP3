@@ -13,6 +13,7 @@ global start
 extern GDT_DESC
 extern IDT_DESC
 extern idt_init
+extern gdt_init
 
 extern pic_reset
 extern pic_enable
@@ -20,6 +21,11 @@ extern pic_enable
 extern mmu_init
 extern mmu_initKernelDir
 extern mmu_initTaskDir
+
+extern tss_init
+
+extern sched_init
+extern game_init
 
 ;; Saltear seccion de datos
 jmp start
@@ -68,9 +74,8 @@ start:
 
     ; Habilitar A20
     call A20_enable
-    
-    ; Cargar la GDT
 
+    ; Cargar la GDT
     lgdt [GDT_DESC]
     ; Setear el bit PE del registro CR0
     
@@ -79,36 +84,35 @@ start:
     or eax, 1
     mov cr0, eax
 
-    jmp (GDT_CODE_0):modo_protegido
+    jmp (GDT_IDX_CODE_0 << 3):modo_protegido
 modo_protegido:
 BITS 32
 
     ; Establecer selectores de segmentos
 
-    mov eax, GDT_DATA_0
-    mov ss, eax
+    mov ax, GDT_IDX_DATA_0 << 3
+    mov ss, ax
 
-    mov ds, eax
-    mov gs, eax
-    mov fs, eax
+    mov ds, ax
+    mov gs, ax
+    mov fs, ax
 
     ; Establecer la base de la pila
     
-    mov esp, 0x2B000
+    mov esp, KERNEL_STACK_BASE
 
     ; Imprimir mensaje de bienvenida
     print_text_pm start_pm_msg, start_pm_len, 0x07, SCREEN_W / 2 - start_rm_len / 2, SCREEN_H / 2
 
-
     ; Inicializar pantalla
     ; Screen Size : 80 x 50 
-    mov eax, GDT_VIDEO
+    mov ax, GDT_IDX_VIDEO << 3
     mov fs, eax ; Usamos el selector de video
 
     call limpiar_pantalla
     call draw_screen
 
-    mov eax, GDT_DATA_0
+    mov eax, GDT_IDX_DATA_0 << 3
     mov fs, eax
 
     ; Inicializar el manejador de memoria
@@ -137,12 +141,14 @@ BITS 32
 
     ; Imprimir libretas de integrantes
     call print_group
-    
-    ; Inicializar tss
 
-    ; Inicializar tss de la tarea Idle
+    ; Inicializar la gdt
+    ; Inicializar tss
+    call tss_init
+    call gdt_init
 
     ; Inicializar el scheduler
+    call sched_init
 
     ; Inicializar la IDT
     call idt_init
@@ -154,11 +160,17 @@ BITS 32
     call pic_enable
 
     ; Cargar tarea inicial
+    mov ax, GDT_IDX_TSS_INIT << 3 ; Cargamos TR con la tarea inicial
+    ltr ax
 
     ; Habilitar interrupciones
     sti
 
+    ; Inicializar juego
+    call game_init
+
     ; Saltar a la primera tarea: Idle
+    jmp (GDT_IDX_TSS_IDLE << 3):0
 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF
@@ -186,16 +198,16 @@ draw_screen:
     push ebp
     mov ebp, esp
 
-    ; Barras
-    mov ecx, BOARD_H/ 2 + 3
-    .bar_loop:
-        seg_print_text_pm single_char, single_char_len, C_BG_RED + C_FG_BLACK, ecx, 0
-        seg_print_text_pm single_char, single_char_len, C_BG_BLUE + C_FG_CYAN, ecx, 79
+    ; Barras --------------------------------------
+    ; mov ecx, BOARD_H/ 2 + 3
+    ; .bar_loop:
+    ;     seg_print_text_pm single_char, single_char_len, C_BG_RED + C_FG_BLACK, ecx, 0
+    ;     seg_print_text_pm single_char, single_char_len, C_BG_BLUE + C_FG_CYAN, ecx, 79
 
-        dec ecx
-        cmp ecx, BOARD_H / 2 - 3
-        jge .bar_loop
-
+    ;     dec ecx
+    ;     cmp ecx, BOARD_H / 2 - 3
+    ;     jge .bar_loop
+    ; Barras --------------------------------------
 
     seg_print_text_pm screen_cln_msg, screen_cln_len, C_BG_BLACK + C_FG_BLACK, SCREEN_H - 1, 0
 
