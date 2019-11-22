@@ -2,7 +2,7 @@
 ; TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 ; ==============================================================================
 
-ORG 0x00014000 ; TASK_IDLE_CODE
+ORG 0x0001C000 ; TASK_IDLE_CODE
 
 BITS 32
 

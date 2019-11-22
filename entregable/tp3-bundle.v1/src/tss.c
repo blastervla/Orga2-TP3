@@ -30,10 +30,10 @@ tss tss_idle = (tss) {
         (uint32_t)  0,  //   edx;
         (uint32_t)  0,  //   ebx;
         (uint32_t)  KERNEL_STACK_END, //   esp;
-        (uint32_t)  0,  //   ebp;
+        (uint32_t)  KERNEL_STACK_END,  //   ebp;
         (uint32_t)  0,  //   esi;
         (uint32_t)  0,  //   edi;
-        (uint16_t)  0,  // es;
+        (uint16_t)  GDT_DATA_0 << 3,  // es;
         (uint16_t)  0,  // unused4;
         (uint16_t)  GDT_CODE_0 << 3,    // cs;
         (uint16_t)  0,  // unused5;
@@ -41,9 +41,9 @@ tss tss_idle = (tss) {
         (uint16_t)  0,  // unused6;
         (uint16_t)  GDT_DATA_0 << 3,    // ds;
         (uint16_t)  0,  // unused7;
-        (uint16_t)  0,  // fs;
+        (uint16_t)  GDT_DATA_0 << 3,  // fs;
         (uint16_t)  0,  // unused8;
-        (uint16_t)  0,  // gs;
+        (uint16_t)  GDT_DATA_0 << 3,  // gs;
         (uint16_t)  0,  // unused9;
         (uint16_t)  0,  // ldt;
         (uint16_t)  0,  // unused10;
