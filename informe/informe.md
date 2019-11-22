@@ -1,3 +1,15 @@
+# TP 3: Orga 2 - Pelotas Locas
+
+
+
+## Integrantes
+
+| Integrante | Libreta Universitaria | Email |
+| ---------- | --------------------- | ----- |
+| Ignacio Alonso Rehor | 195/18      | arehor.ignacio@gmail.com |
+| Manuel Panichelli    | 72/18          | panicmanu@gmail.com |
+| Vladimir Pomsztein | 364/18        | blastervla@gmail.com |
+
 ## Ejercicio 1
 
 #### gdt.c
