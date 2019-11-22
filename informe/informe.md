@@ -185,7 +185,8 @@ cursamos :P)
   y un par de cosas más). Usaremos este método siempre que queramos lanzar una
   nueva pelota. Hicimos una función `tss_ball_handler_reset` análoga, específica
   para los handlers, puesto que hay algunas diferencias entre los stacks de las
-  pelotas y los handlers.
+  pelotas y los handlers. Estos métodos resettean también los registros 
+  selectores de segmento y código.
 
 - En las TSS's, configuramos:
     - ESP0: Pedimos una nueva página de kernel para el stack lvl 0 y le asignamos
