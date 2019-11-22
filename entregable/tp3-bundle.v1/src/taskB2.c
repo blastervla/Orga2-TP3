@@ -9,7 +9,7 @@
 void handler(void);
 
 void task() {
-    char* message = "Tarea B2";
+    char* message = "Windows Vista Fan";
     syscall_talk(message);
     syscall_setHandler(handler);
 

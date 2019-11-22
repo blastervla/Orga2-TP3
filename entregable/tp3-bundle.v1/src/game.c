@@ -560,10 +560,15 @@ void game_showDebugInfo(
     print_hex(  rcr4(), 8,   BOARD_W / 2 + 6,   12,  C_BG_LIGHT_GREY + C_FG_WHITE);
 
     print(      stack_str,     BOARD_W / 2 + 1,   24,  C_BG_LIGHT_GREY + C_FG_BLACK);
-    print_hex(  *((uint32_t *)pchg_esp + 0), 8,   BOARD_W / 2 + 6,    24,  C_BG_LIGHT_GREY + C_FG_WHITE);
+    print_hex(  *(((uint32_t *)pchg_esp) + 0), 8,   BOARD_W / 2 + 6,    24,  C_BG_LIGHT_GREY + C_FG_WHITE);
+    
+    print_hex(  *(((uint32_t *)pchg_esp) + 1), 8,   BOARD_W / 2 + 6,    25,  C_BG_LIGHT_GREY + C_FG_WHITE);
 
-    // TODO: Preguntar --> Hace falta el stack? Alta paja...
-    //       Also, el EIP tiene sentido? Es un quilombo...
+    print_hex(  *(((uint32_t *)pchg_esp) + 2), 8,   BOARD_W / 2 + 6,    26,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print_hex(  *(((uint32_t *)pchg_esp) + 3), 8,   BOARD_W / 2 + 6,    27,  C_BG_LIGHT_GREY + C_FG_WHITE);
+
+    print_hex(  *(((uint32_t *)pchg_esp) + 4), 8,   BOARD_W / 2 + 6,    28,  C_BG_LIGHT_GREY + C_FG_WHITE);
 
     debug_chart_shown = 1;
 }
