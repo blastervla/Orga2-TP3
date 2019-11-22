@@ -1,4 +1,4 @@
-# TP 3: Orga 2 - Pelotas Locas
+# TP 3: Orga 2 - Sin Pelotas
 
 ## Integrantes
 
