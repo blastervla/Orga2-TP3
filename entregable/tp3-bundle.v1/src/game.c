@@ -138,7 +138,7 @@ uint32_t keys[10] = {
 uint32_t keyPresses[10];
 
 void game_tick() {
-    tick = (tick + 1) % 30;
+    tick = (tick + 1) % 7;
 }
 
 /* ---------------------------- UI UTILS ---------------------------- */
