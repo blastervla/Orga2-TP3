@@ -432,6 +432,12 @@ void game_kbInput(uint32_t input) {
             // ---------------------------------------
             // Toggleamos el modo debug
             debug_mode_on = debug_mode_on ? 0 : 1;
+
+            uint8_t fg = C_FG_BLACK;
+            if(debug_mode_on) {
+                fg = C_FG_WHITE;
+            }
+            print("Modo Debug", SCREEN_W / 2 - 5 , SCREEN_H - 1, C_BG_BLACK + fg);
         }
         return;
     }
